@@ -11,7 +11,6 @@ EXPOSE 5000
 
 COPY . .
 
-ENV FLASK_APP=app
 ENV FLASK_ENV=development
 
-CMD [ "python3", "-m", "flask", "run", "--host=0.0.0.0" ]
+CMD [ "python3", "provider_portal.py" ]
