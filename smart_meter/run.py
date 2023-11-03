@@ -18,3 +18,7 @@ def start_smart_meters_in_parallel(path):
             thread = threading.Thread(target=_run_smart_meter_for_uid, args=(uid,))
             print("Smartmeter mit der UID: " + uid + " gestartet")
             thread.start()
+
+
+if __name__ == '__main__':
+    start_smart_meters_in_parallel("/sm")

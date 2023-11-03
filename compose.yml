@@ -1,8 +1,13 @@
 version: '3'
 services:
-  web:
+  provider_portal:
     build: .
     ports: 
-      - '5002:5000'
+      - '443:443'
+    volumes:
+      - .:/app
+
+  smart_meter:
+    build: .
     volumes:
       - .:/app

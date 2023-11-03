@@ -1,5 +1,4 @@
-from provider_portal.api import bp
-
+from . import customer_api_blueprint as bp
 
 @bp.route('meter-create', methods=['POST'])
 def create_meter():
