@@ -1,42 +1,42 @@
 import random
 import time
 from datetime import datetime
-from api import APIHandler
+from smart_meter.api.api import APIHandler
 
 
 class SmartMeter:
     def __init__(self, uid):
-        self.consumption = []
-        self.uid = uid
-        self.api = APIHandler("test.com", uid)
+        self._consumption = []
+        self._uid = uid
+        self._api = APIHandler("test.com", uid)
 
     @staticmethod
-    def generate_consumption(current_time):
+    def _generate_consumption(current_time):
         consumption = 1
         random_factor = random.uniform(-0.1, 0.1)
         randomized_consumption = consumption + (consumption * random_factor)
         return randomized_consumption
 
-    def write_consumption(self):
+    def _write_consumption(self):
         current_time = datetime.now()
 
-        if self.consumption:
-            last_time, _ = self.consumption[len(self.consumption) - 1]
+        if self._consumption:
+            last_time, _ = self._consumption[len(self._consumption) - 1]
             difference = (current_time - last_time).total_seconds()
             if difference >= 1:
                 consumption = self.generate_consumption(current_time)
-                self.consumption.append((current_time, consumption))
+                self._consumption.append((current_time, consumption))
         else:
             consumption = self.generate_consumption(current_time)
-            self.consumption.append((current_time, consumption))
+            self._consumption.append((current_time, consumption))
 
-    def delete(self, timestamp):
-        self.consumption = [(t, v) for t, v in self.consumption if t > timestamp]
+    def _delete(self, timestamp):
+        self._consumption = [(t, v) for t, v in self._consumption if t > timestamp]
 
-    def transfer(self):
+    def _transfer(self):
         data_list = []
         for i in range(0, 60):
-            timestamp, value = self.consumption[i]
+            timestamp, value = self._consumption[i]
             rounded_timestamp = timestamp.isoformat()
             data_point = {
                 "timestamp": rounded_timestamp,
@@ -49,13 +49,13 @@ class SmartMeter:
         print(json_data)
         # status = self.api.send_data(json_data)
         status = True
-        last_timestamp, _ = self.consumption[59]
+        last_timestamp, _ = self._consumption[59]
         if status:
-            self.delete(last_timestamp)
+            self._delete(last_timestamp)
 
     def run_smart_meter(self):
         while True:
-            self.write_consumption()
-            if len(self.consumption) > 60:
-                self.transfer()
+            self._write_consumption()
+            if len(self._consumption) > 60:
+                self._transfer()
             time.sleep(0.2)  # Möglichkeit finden dieses Zeit dynamisch zu ändern
