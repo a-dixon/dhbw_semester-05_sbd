@@ -1,3 +1,7 @@
 __pycache__
 
 .venv
+
+# DB Passwords
+db_password.txt
+db_root_password.txt
