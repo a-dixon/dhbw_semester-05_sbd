@@ -1,8 +1,8 @@
 version: '3'
 services:
-  web:
-    build: .
-    ports: 
-      - '5002:5000'
-    volumes:
-      - .:/app
+  provider_portal:
+    build: provider_portal/Dockerfile
+    
+  smart_meter:
+    build: smart_meter/Dockerfile
+    
