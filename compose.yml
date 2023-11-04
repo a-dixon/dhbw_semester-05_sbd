@@ -1,13 +1,13 @@
 version: '3'
 services:
   provider_portal:
-    build: .
+    build: ./provider_portal
     ports: 
       - '443:443'
     volumes:
       - .:/app
 
   smart_meter:
-    build: .
+    build: ./smart_meter
     volumes:
       - .:/app

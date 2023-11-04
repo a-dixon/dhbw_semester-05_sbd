@@ -13,4 +13,4 @@ COPY . .
 
 ENV FLASK_ENV=development
 
-CMD [ "python3", "provider_portal.py" ]
+CMD [ "python3", "run.py" ]
