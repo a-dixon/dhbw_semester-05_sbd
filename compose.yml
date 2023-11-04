@@ -5,9 +5,9 @@ services:
     ports: 
       - '443:443'
     volumes:
-      - .:/app
+      - .:/app/provider_portal
 
   smart_meter:
     build: ./smart_meter
     volumes:
-      - .:/app
+      - .:/app/smart_meter
