@@ -28,7 +28,8 @@ class CustomerAPI():
 
         # TODO:
         # database entry in meters with meter_UID
-        # database entry in customers-meters with customer_UID and meter_UID 
+        # database entry in customers-meters with customer_UID and meter_UID        
+
         return self._meter_UID
 
 
