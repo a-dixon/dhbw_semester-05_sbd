@@ -16,6 +16,7 @@ services:
 
   mysql:
     image: mysql
+    container_name: mysql
     restart: always
     environment:
       MYSQL_DATABASE: 'provider_db'
@@ -29,6 +30,6 @@ services:
 
 secrets:
   db_password:
-    file: provider_portal/config/db_password.txt
+    file: provider_portal/config/secrets/db_password.txt
   db_root_password:
-    file: provider_portal/config/db_root_password.txt
+    file: provider_portal/config/secrets/db_root_password.txt
