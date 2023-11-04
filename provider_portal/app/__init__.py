@@ -11,6 +11,6 @@ def create_app():
     app.register_blueprint(smartmeter_api_routes, url_prefix='/v1/smartmeter')
 
     from app.api.admin_api import admin_api_blueprint as admin_api_routes
-    app.register_blueprint(admin_api_routes, url_prefix='/v1/smartmeter')
+    app.register_blueprint(admin_api_routes, url_prefix='/v1/admin')
 
     return app
