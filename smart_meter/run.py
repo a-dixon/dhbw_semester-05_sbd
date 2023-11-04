@@ -1,13 +1,13 @@
 import os
 import threading
-from smart_meter.smartmeter import smartmeter
+from smart_meter.app.smartmeter import smartmeter
 
 smart_meters = []
 
 
 def _run_smart_meter_for_uid(uid):
     smart_meter = smartmeter.SmartMeter(uid)
-    smart_meter.run_smart_meter()
+    smart_meter.run_smart_meter(60, 1)
     smart_meters.append(smart_meter)
 
 
