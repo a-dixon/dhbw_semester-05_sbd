@@ -24,6 +24,7 @@ class SmartmeterAPI:
             return False
 
     def add_measurements(self, datapoints):
+        print(datapoints)
         for datapoint in datapoints:
             timestamp = datapoint["timestamp"]
             value = datapoint["value"]

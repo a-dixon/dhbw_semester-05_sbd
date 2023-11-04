@@ -13,6 +13,12 @@ services:
     volumes:
       - ./smart_meter:/app/smart_meter
 
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
 
   mysql:
     image: mysql
