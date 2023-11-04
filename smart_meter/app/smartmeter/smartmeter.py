@@ -2,13 +2,14 @@ import random
 import time
 from datetime import datetime
 from smart_meter.app.api.api import APIHandler
+from smart_meter.config import config
 
 
 class SmartMeter:
     def __init__(self, uid):
         self._consumption = []
         self._uid = uid
-        self._api = APIHandler("https://127.0.0.1/v1/smartmeter/meter-measurements", uid)
+        self._api = APIHandler(config.API_URL, uid)
 
     @staticmethod
     def _generate_consumption(current_time):
@@ -43,12 +44,8 @@ class SmartMeter:
                 "value": value
             }
             data_list.append(data_point)
-        json_data = {
-            "data": data_list
-        }
-        print(json_data)
-        status = self._api.send_data(json_data)
-        status = True
+
+        status = self._api.send_data(data_list)
         last_timestamp, _ = self._consumption[datapoints_unitl_send-1]
         if status:
             self._delete(last_timestamp)

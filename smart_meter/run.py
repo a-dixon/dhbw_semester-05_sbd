@@ -1,5 +1,6 @@
 import os
 import threading
+import config.config as config
 from smart_meter.app.smartmeter import smartmeter
 
 smart_meters = []
@@ -7,7 +8,7 @@ smart_meters = []
 
 def _run_smart_meter_for_uid(uid):
     smart_meter = smartmeter.SmartMeter(uid)
-    smart_meter.run_smart_meter(60, 1)
+    smart_meter.run_smart_meter(2, 5)
     smart_meters.append(smart_meter)
 
 
@@ -21,4 +22,4 @@ def start_smart_meters_in_parallel(path):
 
 
 if __name__ == '__main__':
-    start_smart_meters_in_parallel("/sm")
+    start_smart_meters_in_parallel(config.CERT_DIRECTORY)
