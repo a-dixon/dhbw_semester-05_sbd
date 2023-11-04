@@ -5,13 +5,13 @@ services:
     ports: 
       - '443:443'
     volumes:
-      - .:/app/provider_portal
+      - ./provider_portal:/app/provider_portal
 
 
   smart_meter:
     build: ./smart_meter
     volumes:
-      - .:/app/smart_meter
+      - ./smart_meter:/app/smart_meter
 
 
   mysql:
