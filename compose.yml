@@ -1,8 +1,13 @@
 version: '3'
 services:
   provider_portal:
-    build: provider_portal/Dockerfile
-    
+    build: .
+    ports: 
+      - '443:443'
+    volumes:
+      - .:/app
+
   smart_meter:
-    build: smart_meter/Dockerfile
-    
+    build: .
+    volumes:
+      - .:/app
