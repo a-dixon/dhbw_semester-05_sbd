@@ -1,6 +1,6 @@
 import os
 import threading
-from smart_meter.smartmeter import smartmeter
+from smart_meter.app.smartmeter import smartmeter
 
 smart_meters = []
 

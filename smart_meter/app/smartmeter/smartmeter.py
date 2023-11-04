@@ -1,7 +1,7 @@
 import random
 import time
 from datetime import datetime
-from smart_meter.api.api import APIHandler
+from smart_meter.app.api.api import APIHandler
 
 
 class SmartMeter:
