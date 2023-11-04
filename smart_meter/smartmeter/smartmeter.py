@@ -24,10 +24,10 @@ class SmartMeter:
             last_time, _ = self._consumption[len(self._consumption) - 1]
             difference = (current_time - last_time).total_seconds()
             if difference >= 1:
-                consumption = self.generate_consumption(current_time)
+                consumption = self._generate_consumption(current_time)
                 self._consumption.append((current_time, consumption))
         else:
-            consumption = self.generate_consumption(current_time)
+            consumption = self._generate_consumption(current_time)
             self._consumption.append((current_time, consumption))
 
     def _delete(self, timestamp):
