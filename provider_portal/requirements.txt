@@ -1,2 +1,2 @@
 Flask
-mysql-connector-python
+flask-sqlalchemy
