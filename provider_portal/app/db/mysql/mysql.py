@@ -1,4 +1,4 @@
-from provider_portal.app import mysql_db as db
+from app import mysql_db as db
 
 
 class Customers(db.Model):
