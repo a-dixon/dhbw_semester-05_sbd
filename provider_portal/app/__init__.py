@@ -1,17 +1,18 @@
 from flask import Flask
 from config.config import Config
-#from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    #mysql_db = SQLAlchemy(app)
+    global mysql_db
+    mysql_db = SQLAlchemy(app)
 
-    #from app.db.mysql import mysql
+    from app.db.mysql import mysql
 
-    #with app.app_context():
-    #    mysql_db.create_all()
+    with app.app_context():
+        mysql_db.create_all()
 
     from app.api.customer_api import customer_api_blueprint as customer_api_routes
     app.register_blueprint(customer_api_routes, url_prefix='/v1/provider')
