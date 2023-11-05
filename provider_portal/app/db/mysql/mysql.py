@@ -1,4 +1,4 @@
-from app import mysql_db as db
+from provider_portal.app import mysql_db as db
 
 
 class Customers(db.Model):
@@ -12,7 +12,6 @@ class Customers(db.Model):
 
 class Meters(db.Model):
     uid = db.Column(db.String, primary_key=True, nullable=False)
-    # certificate
 
     def __repr__(self):
         return '<Meter {}>'.format(self.uid)
