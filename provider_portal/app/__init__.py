@@ -1,5 +1,5 @@
 from flask import Flask
-from provider_portal.config.config import MySQLConfig
+from config.config import MySQLConfig
 from flask_sqlalchemy import SQLAlchemy
 
 
