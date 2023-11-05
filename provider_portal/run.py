@@ -22,4 +22,4 @@ class PeerCertWSGIRequestHandler(werkzeug.serving.WSGIRequestHandler):
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, port=8080, ssl_context=ssl_context, request_handler=PeerCertWSGIRequestHandler)
+    app.run(debug=True, host='10.0.1.10', port=8080, ssl_context=ssl_context, request_handler=PeerCertWSGIRequestHandler)

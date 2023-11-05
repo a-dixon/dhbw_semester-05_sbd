@@ -5,8 +5,12 @@ services:
     container_name: provider_portal
     ports: 
       - '443:443'
+      - '8080:8080'
     volumes:
       - ./provider_portal:/app/provider_portal
+    networks:
+      internal:
+        ipv4_address: 10.0.1.10
 
 
   smart_meter:
@@ -14,6 +18,9 @@ services:
     container_name: smart_meter
     volumes:
       - ./smart_meter:/app/smart_meter
+    networks:
+      internal:
+        ipv4_address: 10.0.1.20
 
 
   influxdb:
@@ -22,6 +29,9 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    networks:
+      internal:
+        ipv4_address: 10.0.1.30
 
 
   mysql:
@@ -36,6 +46,9 @@ services:
     secrets:
     - db_password
     - db_root_password
+    networks:
+      internal:
+        ipv4_address: 10.0.1.40
 
 
 secrets:
@@ -43,3 +56,11 @@ secrets:
     file: provider_portal/config/secrets/db_password.txt
   db_root_password:
     file: provider_portal/config/secrets/db_root_password.txt
+
+
+networks:
+  internal:
+    driver: bridge
+    ipam: 
+      config: 
+        - subnet: 10.0.1.0/24
