@@ -1,11 +1,11 @@
 from flask import Flask
-from config.config import Config
+from config.config import MySQLConfig
 #from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+   app.config.from_object(MySQLConfig)
     #mysql_db = SQLAlchemy(app)
 
     #from app.db.mysql import mysql
