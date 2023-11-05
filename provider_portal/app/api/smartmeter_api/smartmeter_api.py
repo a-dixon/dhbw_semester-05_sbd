@@ -1,6 +1,7 @@
 import cryptography
 from cryptography import x509
 from cryptography.hazmat._oid import NameOID
+from app.db.influx.influx import InfluxDB
 
 
 class SmartmeterAPI:
@@ -24,8 +25,12 @@ class SmartmeterAPI:
             return False
 
     def add_measurements(self, datapoints):
-        print(datapoints)
         for datapoint in datapoints:
             timestamp = datapoint["timestamp"]
             value = datapoint["value"]
+            uid = self._uid
+            measurement = "consumption"
+            influxdb = InfluxDB()
+            influxdb.write(timestamp, value, uid, measurement)
+
         pass
