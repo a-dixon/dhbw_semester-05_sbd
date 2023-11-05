@@ -1,19 +1,27 @@
+import sys
 from flask import Flask
-from config.config import MySQLConfig
-from flask_sqlalchemy import SQLAlchemy
+import mysql.connector
+from mysql.connector import errorcode
+#from config.config import MySQLConfig
 
-
-mysql_db = SQLAlchemy()
 
 def create_app():
    app = Flask(__name__)
-   app.config.from_object(MySQLConfig)
-   mysql_db.init_app(app)
 
-   from app.db.mysql import mysql
+   try:
+      db = mysql.connector.connect(user='provider', password='xEMRpr32b7Xg8nNCWNakgnDrSja8b50',
+                                host='10.0.1.40',
+                                database='provider')
+   except mysql.connector.Error as err:
+      if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+         print('Authentication error', file=sys.stderr)
+      elif err.errno == errorcode.ER_BAD_DB_ERROR:
+         print('Database does not exist', file=sys.stderr)
+      else:
+         print(err, file=sys.stderr)
+   else:
+      db.close()
 
-   with app.app_context():
-      mysql_db.create_all()
 
    from app.api.customer_api import customer_api_blueprint as customer_api_routes
    app.register_blueprint(customer_api_routes, url_prefix='/v1/provider')
