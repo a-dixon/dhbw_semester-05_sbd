@@ -12,7 +12,7 @@ class Customers(db.Model):
 
 class Meters(db.Model):
     uid = db.Column(db.String, primary_key=True, nullable=False)
-
+    # certificate
 
     def __repr__(self):
         return '<Meter {}>'.format(self.uid)
@@ -31,6 +31,12 @@ class Users(db.Model):
     uid = db.Column(db.String, primary_key=True, nullable=False)
     api_key = db.Column(db.String, index=True, unique=True, nullable=False)
     username = db.Column(db.String, index=True, unique=True, nullable=False)
+
+
+    def __init__(self, uid: str, api_key: str, username: str):
+        self.uid = uid
+        self.api_key = api_key
+        self.username = username
 
 
     def __repr__(self):
