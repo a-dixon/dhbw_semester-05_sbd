@@ -2,6 +2,7 @@ version: '3'
 services:
   provider_portal:
     build: ./provider_portal
+    container_name: provider_portal
     ports: 
       - '443:443'
     volumes:
@@ -10,6 +11,7 @@ services:
 
   smart_meter:
     build: ./smart_meter
+    container_name: smart_meter
     volumes:
       - ./smart_meter:/app/smart_meter
 
