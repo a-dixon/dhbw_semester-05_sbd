@@ -1,6 +1,5 @@
 Flask
-flask-mysql
-mysqlclient
+mysql-connector-python
 cryptography
 pyOpenSSL
 influxdb-client
