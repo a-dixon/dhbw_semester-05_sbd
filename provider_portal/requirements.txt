@@ -1,5 +1,5 @@
 Flask
-flask-sqlalchemy
+flask-mysql
 mysqlclient
 cryptography
 pyOpenSSL
