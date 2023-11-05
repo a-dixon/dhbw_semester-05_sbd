@@ -1,5 +1,6 @@
 Flask
 flask-sqlalchemy
+mysqlclient
 cryptography
 OpenSSL
 influxdb-client
