@@ -55,4 +55,4 @@ class SmartMeter:
             self._write_consumption(time_between_datapoints)
             if len(self._consumption) > datapoints_unitl_send:
                 self._transfer(datapoints_unitl_send)
-            time.sleep(0.2)  # Möglichkeit finden dieses Zeit dynamisch zu ändern
+            time.sleep(0.2)

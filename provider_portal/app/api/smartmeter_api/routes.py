@@ -1,3 +1,5 @@
+import sys
+
 import cryptography.x509
 from cryptography.hazmat.backends import default_backend
 
@@ -15,10 +17,14 @@ def meter_measurements():
 
     api = smartmeter_api.SmartmeterAPI(client_cert_raw, meter_uid)
     if api.authenticate_smartmeter():
-        api.add_measurements(data["data"])
-        response = jsonify({"message": "Die Messpunkte wurden erfolgreich in die Datenbank geschrieben"})
-        response.status_code = 200
-        return response
+        if api.add_measurements(data["data"]):
+            response = jsonify({"message": "Die Messpunkte wurden erfolgreich in die Datenbank geschrieben"})
+            response.status_code = 200
+            return response
+        else:
+            response = jsonify({"message": "Die Messpunkte konnten nicht in die Datenbank geschrieben werden"})
+            response.status_code = 500
+            return response
     else:
         response = jsonify({"message": "Smart Meter Zertifikat nicht am API Endpoint hinterlegt"})
         response.status_code = 400
