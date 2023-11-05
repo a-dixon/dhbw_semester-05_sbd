@@ -39,16 +39,31 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_DATABASE: 'provider_db'
-      MYSQL_USER: 'provider_user'
+      MYSQL_DATABASE: 'provider'
+      MYSQL_USER: 'provider'
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
     secrets:
-    - db_password
-    - db_root_password
+      - db_password
+      - db_root_password
+    volumes:
+      - ./provider_portal/db_data/mysql:/var/lib/mysql
     networks:
       internal:
         ipv4_address: 10.0.1.40
+
+  
+  phpmyadmin:
+    image: lscr.io/linuxserver/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      internal:
+        ipv4_address: 10.0.1.50
 
 
 secrets:
