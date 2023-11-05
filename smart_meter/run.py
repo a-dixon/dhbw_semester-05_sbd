@@ -1,7 +1,7 @@
 import os
 import threading
-import config.config as config
-from smart_meter.app.smartmeter import smartmeter
+from config import config
+from app.smartmeter import smartmeter
 
 smart_meters = []
 

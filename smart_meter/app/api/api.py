@@ -1,7 +1,6 @@
 import requests
 import json
-import os
-from smart_meter.config import config
+from config import config
 
 class APIHandler:
     def __init__(self, api_url, uid):
