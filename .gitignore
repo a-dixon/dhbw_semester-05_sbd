@@ -5,3 +5,6 @@ __pycache__
 # DB Passwords
 db_password.txt
 db_root_password.txt
+
+# DB data
+provider_portal/db_data
