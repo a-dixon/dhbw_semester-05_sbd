@@ -1,13 +1,14 @@
 from flask import Flask
-from config.config import MySQLConfig
+from provider_portal.config.config import MySQLConfig
 from flask_sqlalchemy import SQLAlchemy
 
 
+mysql_db = SQLAlchemy()
+
 def create_app():
    app = Flask(__name__)
-   global mysql_db
-   mysql_db = SQLAlchemy(app)
    app.config.from_object(MySQLConfig)
+   mysql_db.init_app(app)
 
    from app.db.mysql import mysql
 
