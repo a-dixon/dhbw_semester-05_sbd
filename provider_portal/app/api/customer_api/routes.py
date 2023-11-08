@@ -34,6 +34,8 @@ def meter_measurements():
     data_interval = data['dataInterval']
 
     api = customer_api(customer_UID=customer_UID, api_key=api_key)
+    res = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
+
     pass
 
 
