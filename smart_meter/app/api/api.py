@@ -24,7 +24,7 @@ class APIHandler:
             return False
         try:
             response = requests.post(self._api_url, data=json.dumps(post_data), headers=headers, cert=certificates, verify=config.ROOT_CA_PEM)
-            # response = requests.post(self._api_url, data=json.dumps(post_data), headers=headers)
+            # response = requests.post(self._api_url, data=json.dumps(post_data), headers=headers, cert=certificates, verify=False)
             if response.status_code == 200:
                 return True
             else:

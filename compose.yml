@@ -29,6 +29,9 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    volumes:
+      - ./provider_portal/db_data/influx/config:/etc/influxdb2
+      - ./provider_portal/db_data/influx/db:/var/lib/influxdb2
     networks:
       internal:
         ipv4_address: 10.0.1.30

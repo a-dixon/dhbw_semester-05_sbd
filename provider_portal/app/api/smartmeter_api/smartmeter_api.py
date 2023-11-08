@@ -1,6 +1,9 @@
+import sys
+
 import cryptography
 from cryptography import x509
 from cryptography.hazmat._oid import NameOID
+from app.db.influx.influx import InfluxDB
 
 
 class SmartmeterAPI:
@@ -24,8 +27,18 @@ class SmartmeterAPI:
             return False
 
     def add_measurements(self, datapoints):
-        print(datapoints)
+
+        successful = True
+        influxdb = InfluxDB()
+        # print(influxdb.read(start_time="2023-11-05T21:34:00.000Z", end_time="2023-11-05T21:35:00.000Z", interval="1s",uid="040506", measurement="consumption"), file=sys.stderr)
+
         for datapoint in datapoints:
             timestamp = datapoint["timestamp"]
             value = datapoint["value"]
-        pass
+            uid = self._uid
+            measurement = "consumption"
+
+            if not influxdb.write(timestamp, value, uid, measurement):
+                successful = False
+
+        return successful
