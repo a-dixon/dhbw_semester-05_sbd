@@ -10,4 +10,5 @@ INFLUX_BUCKET = "smartmeter"
 INFLUX_PROVIDER = "provider"
 
 class MySQLConfig(object):
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://provider_user:db_password@mysql/provider_db'
+    #SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://provider:xEMRpr32b7Xg8nNCWNakgnDrSja8b5@10.0.1.40:3306/provider'
+    pass
