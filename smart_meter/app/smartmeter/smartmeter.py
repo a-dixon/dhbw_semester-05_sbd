@@ -34,9 +34,9 @@ class SmartMeter:
     def _delete(self, timestamp):
         self._consumption = [(t, v) for t, v in self._consumption if t > timestamp]
 
-    def _transfer(self, datapoints_unitl_send):
+    def _transfer(self, datapoints_until_send):
         data_list = []
-        for i in range(0, datapoints_unitl_send):
+        for i in range(0, datapoints_until_send):
             timestamp, value = self._consumption[i]
             rounded_timestamp = timestamp.isoformat()
             data_point = {
@@ -46,7 +46,7 @@ class SmartMeter:
             data_list.append(data_point)
 
         status = self._api.send_data(data_list)
-        last_timestamp, _ = self._consumption[datapoints_unitl_send-1]
+        last_timestamp, _ = self._consumption[datapoints_until_send-1]
         if status:
             self._delete(last_timestamp)
 
