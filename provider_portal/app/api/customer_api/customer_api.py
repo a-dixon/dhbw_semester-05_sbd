@@ -1,4 +1,5 @@
 from uuid import uuid4
+from app.db.influx.influx import InfluxDB
 
 
 class CustomerAPI():
@@ -33,10 +34,14 @@ class CustomerAPI():
         return self._meter_UID
 
 
-    def get_meter_measurements(self):
+    def get_meter_measurements(self, start_time, end_time, data_interval, meter_uid):
         ''' Get smart meter measurements.'''
         # TODO:
         # get measurements in defined range from InfluxDB
+        influxdb = InfluxDB()
+        reading = influxdb.read(start_time=start_time, end_time=end_time, interval=data_interval, uid=meter_uid)
+        # print(influxdb.read(start_time="2023-11-05T21:34:00.000Z", end_time="2023-11-05T21:35:00.000Z", interval="1s",uid="040506", measurement="consumption"), file=sys.stderr)
+
         pass
 
 

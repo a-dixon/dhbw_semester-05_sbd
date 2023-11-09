@@ -2,14 +2,15 @@ import sys
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
+from config import config
 
 
 class InfluxDB:
     def __init__(self):
-        self._token = "DzFwd-VxKfwt4Y20okuIDbolk3X8bcsGLOMDM0mp2IsdImr-Uji5JrclSyHmuUo-QLgIUmyQYJXzRhqKjNmmXQ=="
-        self._bucket = "smartmeter"
-        self._provider = "provider"
-        self._url = "http://10.0.1.30:8086"
+        self._token = config.INFLUX_TOKEN
+        self._bucket = config.INFLUX_BUCKET
+        self._provider = config.INFLUX_PROVIDER
+        self._url = config.INFLUX_URL
         self._client = InfluxDBClient(url=self._url, token=self._token, org=self._provider)
 
         bucket_api = self._client.buckets_api()

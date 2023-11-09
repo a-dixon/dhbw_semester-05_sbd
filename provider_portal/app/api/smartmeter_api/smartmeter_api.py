@@ -30,7 +30,6 @@ class SmartmeterAPI:
 
         successful = True
         influxdb = InfluxDB()
-        # print(influxdb.read(start_time="2023-11-05T21:34:00.000Z", end_time="2023-11-05T21:35:00.000Z", interval="1s",uid="040506", measurement="consumption"), file=sys.stderr)
 
         for datapoint in datapoints:
             timestamp = datapoint["timestamp"]
