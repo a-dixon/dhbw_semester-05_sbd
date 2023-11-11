@@ -29,7 +29,8 @@ class CustomerAPI():
 
         # TODO:
         # database entry in meters with meter_UID
-        # database entry in customers-meters with customer_UID and meter_UID        
+        # database entry in customers-meters with customer_UID and meter_UID
+        # pass UID to Joshuas script
 
         return self._meter_UID
 
