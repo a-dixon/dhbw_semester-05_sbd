@@ -3,6 +3,7 @@ import threading
 
 from config import config
 from flask import Flask
+from app.db.mysql import mysql
 
 
 def create_customer_api():
@@ -41,6 +42,9 @@ if __name__ == '__main__':
     ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH, cafile=config.CA_CERT)
     ssl_context.load_cert_chain(certfile=config.SERVER_CERT, keyfile=config.SERVER_KEY)
     ssl_context.verify_mode = ssl.CERT_REQUIRED
+
+    mysql_db = mysql.MySQL()
+    mysql_db.create()
 
     smartmeter_api_app = create_smartmeter_api()
     customer_api_app = create_customer_api()
