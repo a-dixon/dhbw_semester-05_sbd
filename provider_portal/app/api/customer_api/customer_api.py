@@ -1,4 +1,5 @@
 from uuid import uuid4
+from app.db.mysql.mysql import MySQL
 from app.db.influx.influx import InfluxDB
 
 
@@ -9,18 +10,15 @@ class CustomerAPI():
         self._customer_UID = customer_UID
 
         if not self._authenticate_customer_portal(api_key):
-            return False   
-
-
-    def _authenticate_customer_portal(self, apiKey: str):
-        # TODO:
-        # check if api key exists in database in combination with customer UID
-        pass
+            return False
+   
 
     @staticmethod
     def _generate_meter_UID(self):
         ''' Generate unique meter ID based on uuid4 function'''
         return str(uuid4())
+    
+
     def _authenticate_customer_portal(self, api_key: str):
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
