@@ -17,7 +17,7 @@ class CustomerAPI():
         # check if api key exists in database in combination with customer UID
         pass
 
-
+    @staticmethod
     def _generate_meter_UID(self):
         ''' Generate unique meter ID based on uuid4 function'''
         return str(uuid4())
