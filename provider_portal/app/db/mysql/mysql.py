@@ -104,5 +104,25 @@ class MySQL:
             else:
                 print('OK', file=sys.stderr)
 
-        self._cursor.close()
-        self._cnx.close()
+    def insert_test_data(self):
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor()
+        cnx.database = self._DB_NAME
+
+        customer_UID_1 = '123456'
+        customer_api_key_1 = 'abcdefg'
+
+        customer_UID_2 = '654321'
+        customer_api_key_2 = 'gfedcba'
+
+        add_customer_1 = (f'INSERT INTO customers (customer_UID, api_key) VALUES ("{customer_UID_1}", "{customer_api_key_1}")')
+        add_customer_2 = (f'INSERT INTO customers (customer_UID, api_key) VALUES ("{customer_UID_2}", "{customer_api_key_2}")')
+
+        cursor.execute(add_customer_1)
+        cursor.execute(add_customer_2)
+
+        cnx.commit()
+
+        cursor.close()
+        cnx.close()
