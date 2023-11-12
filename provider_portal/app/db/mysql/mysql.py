@@ -126,3 +126,20 @@ class MySQL:
 
         cursor.close()
         cnx.close()
+    def get_api_key(self, customer_UID: str):
+        ''' Returns API Key for corresponding customer UID.'''
+
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        # --- Query database ---
+        query = (f'SELECT api_key FROM customers WHERE customer_UID="{customer_UID}"')
+        cursor.execute(query)
+        api_key = cursor.fetchone()[0]
+
+        cursor.close()
+        cnx.close()
+
+        return api_key
