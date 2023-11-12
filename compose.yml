@@ -11,6 +11,8 @@ services:
     networks:
       internal:
         ipv4_address: 10.0.1.10
+    depends_on:
+      - mysql
 
 
   smart_meter:
