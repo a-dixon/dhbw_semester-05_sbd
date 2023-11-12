@@ -21,6 +21,14 @@ class CustomerAPI():
     def _generate_meter_UID(self):
         ''' Generate unique meter ID based on uuid4 function'''
         return str(uuid4())
+    def _authenticate_customer_portal(self, api_key: str):
+        ''' Assert passed api_key is equal to api_key in db.'''
+        # --- Get expected API key from database ---
+        mysql = MySQL()
+        expected_api_key = mysql.get_api_key(self._customer_UID)
+
+        # --- Return if API keys are equal ---
+        return expected_api_key == api_key
 
     
     def create_meter(self):
