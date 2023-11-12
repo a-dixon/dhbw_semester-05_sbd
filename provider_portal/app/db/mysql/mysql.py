@@ -12,6 +12,21 @@ class MySQL:
         self._host = '10.0.1.40'
         self._port = 3306
 
+
+    def _create_database(self, cursor):
+        ''' Create database.'''
+        try:
+            cursor.execute(
+                f'CREATE DATABASE {self._DB_NAME} DEFAULT CHARACTER SET "utf8"')
+            
+        except mysql.connector.Error as err:
+                print(f'Failed creating database: {err}', file=sys.stderr)
+                exit(1)
+
+
+    def create(self):
+        ''' Create database and tables.'''
+
         # --- Define DB name and tables ---
         self._DB_NAME = 'provider'
 
@@ -48,39 +63,24 @@ class MySQL:
             "   `api_key` varchar(32) NOT NULL,"
             "   `username` varchar(32)"
             ") ENGINE=InnoDB")
-        
-
-    def _create_database(self, cursor):
-        ''' Create database.'''
-        try:
-            cursor.execute(
-                f'CREATE DATABASE {self._DB_NAME} DEFAULT CHARACTER SET "utf8"')
-            
-        except mysql.connector.Error as err:
-                print(f'Failed creating database: {err}', file=sys.stderr)
-                exit(1)
-
-
-    def create(self):
-        ''' Create database and tables.'''
 
         # --- Create connector and cursor --- 
-        self._cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
-        self._cursor = self._cnx.cursor()
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor()
 
 
         # --- Try to set DB name ---
         try:
-            self._cursor.execute(f'USE {self._DB_NAME}')
+            cursor.execute(f'USE {self._DB_NAME}')
 
         # --- Call create function if DB does not exist ---
         except mysql.connector.Error as err:
             print(f'Database {self._DB_NAME} does not exist.', file=sys.stderr)
             
             if err.errno == errorcode.ER_BAD_DB_ERROR:
-                self._create_database(cursor=self._cursor)
+                self._create_database(cursor=cursor)
                 print(f'Database {self._DB_NAME} created successfully', file=sys.stderr)
-                self._cnx.database = self._DB_NAME
+                cnx.database = self._DB_NAME
             
             else:
                 print(err)
@@ -92,18 +92,22 @@ class MySQL:
 
             try:
                 print(f'Creating table {table_name}:', end='', file=sys.stderr)
-                self._cursor.execute(table_description)
+                cursor.execute(table_description)
 
             except mysql.connector.Error as err:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                    print('already exists.', file=sys.stderr)
+                    print(' already exists.', file=sys.stderr)
 
                 else:
                     print(err.msg)
 
             else:
-                print('OK', file=sys.stderr)
+                print(' OK', file=sys.stderr)
 
+        cursor.close()
+        cnx.close()
+
+    
     def insert_test_data(self):
         # --- Create connector and cursor --- 
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
@@ -126,6 +130,8 @@ class MySQL:
 
         cursor.close()
         cnx.close()
+
+    
     def get_api_key(self, customer_UID: str):
         ''' Returns API Key for corresponding customer UID.'''
 
