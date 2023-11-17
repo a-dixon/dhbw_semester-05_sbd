@@ -19,7 +19,7 @@ def create_meter():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-        
+
         try:
             meter_UID = api.create_meter()
             status_1 = True
@@ -46,9 +46,19 @@ def meter_measurements():
     data_interval = data['dataInterval']
 
     api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
-    res = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
+    auth_status = api.authenticate_customer_portal()
 
-    pass
+    if auth_status:
+
+        try:
+            data = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
+            status_1 = True
+            status_2 = False
+        except:
+            status_1 = False
+            status_2 = False
+
+    return Response([auth_status, status_1, status_2], meter_UID=meter_UID).to_response()
 
 
 @bp.route('meter-delete', methods=['DELETE'])
