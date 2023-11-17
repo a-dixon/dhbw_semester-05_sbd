@@ -11,9 +11,6 @@ class CustomerAPI():
         self._customer_UID = customer_UID
         self._api_key = api_key
 
-        if not self._authenticate_customer_portal():
-            return False
-   
 
     @staticmethod
     def _generate_meter_UID(self):
