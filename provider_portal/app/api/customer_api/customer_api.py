@@ -44,13 +44,13 @@ class CustomerAPI():
         except Exception as err:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-
+            raise err
         try:
             mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
-        except:
+        except Exception as err:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-
+            raise err
         # TODO:
         # pass UID to Joshuas script
 
@@ -70,23 +70,19 @@ class CustomerAPI():
 
     def delete_meter(self, meter_UID):
         ''' Delete smart meter.'''
-        # TODO:
-        # delete database entry in customers-meters with customer_UID and meter_UID 
-        # delete database entry in meters with meter_UID
         
-
         mysql = MySQL()
 
         try:
             mysql._delete_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
-        except:
+        except Exception as err:
             print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-
+            raise err
+        
         try:
             mysql.delete_meter(meter_UID=meter_UID)
         except Exception as err:
             print('Smart meter could not be deleted from meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-
-        return self._meter_UID
+            raise err
