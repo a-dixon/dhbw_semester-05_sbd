@@ -66,6 +66,12 @@ def delete_meter():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-        pass
+        try:
+            api.delete_meter()
+            create_status = True
+            delete_status = True
+        except:
+            create_status = False
+            delete_status = True
 
-    pass
+    return Response([auth_status, create_status, delete_status], meter_UID=meter_UID).to_response()
