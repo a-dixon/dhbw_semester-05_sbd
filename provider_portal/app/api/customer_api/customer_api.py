@@ -21,7 +21,7 @@ class CustomerAPI():
         return str(uuid4())
     
 
-    def _authenticate_customer_portal(self):
+    def authenticate_customer_portal(self):
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
         mysql = MySQL()
