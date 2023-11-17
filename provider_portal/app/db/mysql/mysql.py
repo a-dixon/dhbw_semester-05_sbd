@@ -132,7 +132,7 @@ class MySQL:
         cnx.close()
 
     
-    def get_api_key(self, customer_UID: str):
+    def _get_api_key(self, customer_UID: str):
         ''' Returns API Key for corresponding customer UID.'''
 
         # --- Create connector and cursor --- 
@@ -145,7 +145,42 @@ class MySQL:
         cursor.execute(query)
         api_key = cursor.fetchone()[0]
 
+        # --- Cleanup ---
         cursor.close()
         cnx.close()
 
         return api_key
+    
+
+    def _insert_meter(self, meter_UID: str):
+        ''' Insert meter_UID into meters table.'''
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        # --- Query database ---
+        query = (f'INSERT INTO meters (meter_UID) VALUES ("{meter_UID}")')
+        cursor.execute(query)
+        cnx.commit()
+
+        # --- Cleanup --- 
+        cursor.close()
+        cnx.close()
+
+
+    def _insert_customer_meter(self, customer_UID: str, meter_UID: str):
+        ''' Insert customer_UID and meter_UID into customers_meters table.'''
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        # --- Query database ---
+        query = (f'INSERT INTO customers_meters (customer_UID, meter_UID) VALUES ("{customer_UID}", "{meter_UID}")')
+        cursor.execute(query)
+        cnx.commit()
+
+        # --- Cleanup ---
+        cursor.close()
+        cnx.close()
