@@ -1,3 +1,5 @@
+import sys
+
 from flask import request, json, jsonify
 from . import customer_api_blueprint as bp
 from .customer_api import CustomerAPI
@@ -19,10 +21,10 @@ def create_meter():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-
         try:
             meter_UID = api.create_meter()
             res = {"message": "success_create_meter", "meter_UID": meter_UID}
+            print(res, file=sys.stderr)
             return Response(dict=res).create_response()
 
         except:
