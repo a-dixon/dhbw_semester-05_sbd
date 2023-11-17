@@ -32,7 +32,7 @@ class MySQL:
         self._TABLES['customers'] = (
             "CREATE TABLE `customers` ("
             "   `customer_UID` varchar(36) NOT NULL,"
-            "   `api_key` varchar(32) NOT NULL,"
+            "   `api_key` varchar(36) NOT NULL,"
             "   PRIMARY KEY (`customer_UID`)"
             ") ENGINE=InnoDB")
 
@@ -58,7 +58,7 @@ class MySQL:
         self._TABLES['users'] = (
             "CREATE TABLE `users`("
             "   `user_UID` varchar(36) NOT NULL,"
-            "   `api_key` varchar(32) NOT NULL,"
+            "   `api_key` varchar(36) NOT NULL,"
             "   `username` varchar(32)"
             ") ENGINE=InnoDB")
 
