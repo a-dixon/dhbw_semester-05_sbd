@@ -184,3 +184,37 @@ class MySQL:
         # --- Cleanup ---
         cursor.close()
         cnx.close()
+
+
+    def _delete_customer_meter(self, meter_UID: str):
+        ''' Delete entry for meter_UID in customers_meters table.'''
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        # --- Query database ---
+        query = (f'DELETE FROM customers_meters WHERE meter_UID = "{meter_UID}"')
+        cursor.execute(query)
+        cnx.commit()
+
+        # --- Cleanup ---
+        cursor.close()
+        cnx.close()
+
+    
+    def _delete_meter(self, meter_UID: str):
+        ''' Delete entry for meter_UID in meters table.'''
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+    
+        # --- Query database ---
+        query = (f'DELETE FROM meters WHERE meter_UID = "{meter_UID}"')
+        cursor.execute(query)
+        cnx.commit()
+
+        # --- Cleanup ---
+        cursor.close()
+        cnx.close()
