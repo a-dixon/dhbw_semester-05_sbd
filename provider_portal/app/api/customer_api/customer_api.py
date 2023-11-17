@@ -1,5 +1,6 @@
 import sys
 import shutil
+from datetime import datetime, timezone, timedelta
 from uuid import uuid4
 from config import config
 from app.db.mysql.mysql import MySQL
@@ -59,13 +60,29 @@ class CustomerAPI:
 
     def get_meter_measurements(self, start_time, end_time, data_interval, meter_UID):
         ''' Get smart meter measurements.'''
-        # TODO:
-        # get measurements in defined range from InfluxDB
-        influxdb = InfluxDB()
-        reading = influxdb.read(start_time=start_time, end_time=end_time, interval=data_interval, uid=meter_UID)
-        # print(influxdb.read(start_time="2023-11-05T21:34:00.000Z", end_time="2023-11-05T21:35:00.000Z", interval="1s",uid="040506", measurement="consumption"), file=sys.stderr)
 
-        pass
+        # Check if end_time is in the future
+        current_time = datetime.now(timezone(timedelta(hours=1)))
+        if datetime.fromisoformat(end_time.replace(" ", "+")) > current_time:
+            raise ValueError("error_no_data")
+
+        # Check the number of data points based on the specified time range and data interval
+        time_diff = datetime.fromisoformat(end_time.replace(" ", "+")) - datetime.fromisoformat(
+            start_time.replace(" ", "+"))
+        num_data_points = int(time_diff.total_seconds() / int(data_interval))
+
+        if num_data_points > 3600:
+            raise ValueError("error_over_maximum")
+
+        print(start_time.replace(" ", "+"), file=sys.stderr)
+        converted_start_time = start_time.replace(" ", "+")
+        converted_end_time = end_time.replace(" ", "+")
+        converted_data_interval = data_interval + "s"
+
+        influxdb = InfluxDB()
+        reading = influxdb.read(start_time=converted_start_time, end_time=converted_end_time, interval=converted_data_interval, uid=meter_UID, measurement="consumption")
+
+        return reading
 
 
     def delete_meter(self, meter_UID):
@@ -83,7 +100,7 @@ class CustomerAPI:
         
         try:
             mysql.delete_meter(meter_UID=meter_UID)
-            influxdb.delete(meter_UID)
+            # influxdb.delete(meter_UID)
         except Exception as err:
             print('Smart meter could not be deleted from meters database.', file=sys.stderr)
             print(err, file=sys.stderr)

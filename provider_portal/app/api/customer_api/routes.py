@@ -42,20 +42,27 @@ def meter_measurements():
     api_key = request.headers['Authorization']
 
     # Extract data from request body
-    data = json.loads(request.data)
-    customer_UID = data['customerUID']
-    meter_UID = data['meterUID']
-    start_time = data['startTime']
-    end_time = data['endTime']
-    data_interval = data['dataInterval']
+    customer_UID = request.args.get('customerUID')
+    meter_UID = request.args.get('meterUID')
+    start_time = request.args.get('startTime')
+    end_time = request.args.get('endTime')
+    data_interval = request.args.get('dataInterval')
 
     api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-        res = api.get_meter_measurements(
-            start_time, end_time, data_interval, meter_UID)
-        return Response(dict=res).create_response()
+        try:
+            measurements = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
+            res = {"data": measurements}
+            return Response(dict=res).create_response()
+        except ValueError as err:
+            res = {"message": f"{err}"}
+            return Response(dict=res).create_response()
+        except Exception as err:
+            print(err, file=sys.stderr)
+            res = {"message": "error_decoding"}
+            return Response(dict=res).create_response()
 
     res = {"message": "error_authentication"}
     return Response(dict=res).create_response()
