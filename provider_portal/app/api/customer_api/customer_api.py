@@ -1,5 +1,7 @@
 import sys
+import shutil
 from uuid import uuid4
+from config import config
 from app.db.mysql.mysql import MySQL
 from app.db.influx.influx import InfluxDB
 from app.utils.certificates.gen_client_certificates import generate_client_certificate
@@ -14,7 +16,7 @@ class CustomerAPI:
    
 
     @staticmethod
-    def _generate_meter_UID(self):
+    def _generate_meter_UID():
         ''' Generate unique meter ID based on uuid4 function'''
         return str(uuid4())
     
@@ -52,7 +54,7 @@ class CustomerAPI:
 
         generate_client_certificate(meter_UID)
 
-        return self._meter_UID
+        return meter_UID
 
 
     def get_meter_measurements(self, start_time, end_time, data_interval, meter_UID):
@@ -73,7 +75,7 @@ class CustomerAPI:
         influxdb = InfluxDB()
 
         try:
-            mysql._delete_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
+            mysql.delete_customer_meter(meter_UID=meter_UID)
         except Exception as err:
             print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
@@ -84,5 +86,13 @@ class CustomerAPI:
             influxdb.delete(meter_UID)
         except Exception as err:
             print('Smart meter could not be deleted from meters database.', file=sys.stderr)
+            print(err, file=sys.stderr)
+            raise err
+
+        try:
+            path = f"{config.CLIENT_CERT_DIRECTORY}/{meter_UID}"
+            shutil.rmtree(path)
+        except Exception as err:
+            print('Smart meter could not be deleted from smartmeter wrapper.', file=sys.stderr)
             print(err, file=sys.stderr)
             raise err

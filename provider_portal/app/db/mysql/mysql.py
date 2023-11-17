@@ -183,7 +183,7 @@ class MySQL:
         cnx.close()
 
 
-    def _delete_customer_meter(self, meter_UID: str):
+    def delete_customer_meter(self, meter_UID: str):
         ''' Delete entry for meter_UID in customers_meters table.'''
         # --- Create connector and cursor --- 
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
@@ -199,19 +199,27 @@ class MySQL:
         cursor.close()
         cnx.close()
 
-    
-    def _delete_meter(self, meter_UID: str):
+    def delete_meter(self, meter_UID: str):
         ''' Delete entry for meter_UID in meters table.'''
         # --- Create connector and cursor --- 
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
-    
+
         # --- Query database ---
-        query = (f'DELETE FROM meters WHERE meter_UID = "{meter_UID}"')
+        query = f'DELETE FROM meters WHERE meter_UID = "{meter_UID}"'
         cursor.execute(query)
+
+        # Check the affected row count
+        affected_rows = cursor.rowcount
+
+        # Commit the changes
         cnx.commit()
 
         # --- Cleanup ---
         cursor.close()
         cnx.close()
+
+        # Raise an error if no rows were affected
+        if affected_rows == 0:
+            raise ValueError(f"No meter found with meter_UID: {meter_UID}.")
