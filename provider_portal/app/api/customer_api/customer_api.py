@@ -11,6 +11,9 @@ class CustomerAPI():
         self._customer_UID = customer_UID
         self._api_key = api_key
 
+        if not self._authenticate_customer_portal():
+            return False
+   
 
     @staticmethod
     def _generate_meter_UID(self):
@@ -18,7 +21,7 @@ class CustomerAPI():
         return str(uuid4())
     
 
-    def authenticate_customer_portal(self):
+    def _authenticate_customer_portal(self):
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
         mysql = MySQL()
@@ -41,14 +44,12 @@ class CustomerAPI():
         except Exception as err:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-            raise err
 
         try:
             mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
         except:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
-            raise err
 
         # TODO:
         # pass UID to Joshuas script
@@ -56,20 +57,36 @@ class CustomerAPI():
         return self._meter_UID
 
 
-    def get_meter_measurements(self, start_time, end_time, data_interval, meter_uid):
+    def get_meter_measurements(self, start_time, end_time, data_interval, meter_UID):
         ''' Get smart meter measurements.'''
         # TODO:
         # get measurements in defined range from InfluxDB
         influxdb = InfluxDB()
-        reading = influxdb.read(start_time=start_time, end_time=end_time, interval=data_interval, uid=meter_uid)
+        reading = influxdb.read(start_time=start_time, end_time=end_time, interval=data_interval, uid=meter_UID)
         # print(influxdb.read(start_time="2023-11-05T21:34:00.000Z", end_time="2023-11-05T21:35:00.000Z", interval="1s",uid="040506", measurement="consumption"), file=sys.stderr)
 
         pass
 
 
-    def delete_meter(self):
+    def delete_meter(self, meter_UID):
         ''' Delete smart meter.'''
         # TODO:
-        # delete database entry in meters with meter_UID
         # delete database entry in customers-meters with customer_UID and meter_UID 
-        pass
+        # delete database entry in meters with meter_UID
+        
+
+        mysql = MySQL()
+
+        try:
+            mysql._delete_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
+        except:
+            print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
+            print(err, file=sys.stderr)
+
+        try:
+            mysql.delete_meter(meter_UID=meter_UID)
+        except Exception as err:
+            print('Smart meter could not be deleted from meters database.', file=sys.stderr)
+            print(err, file=sys.stderr)
+
+        return self._meter_UID
