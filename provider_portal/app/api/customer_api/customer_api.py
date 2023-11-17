@@ -8,8 +8,9 @@ class CustomerAPI():
 
     def __init__(self, customer_UID: str, api_key: str):
         self._customer_UID = customer_UID
+        self._api_key = api_key
 
-        if not self._authenticate_customer_portal(api_key):
+        if not self._authenticate_customer_portal():
             return False
    
 
@@ -19,14 +20,14 @@ class CustomerAPI():
         return str(uuid4())
     
 
-    def _authenticate_customer_portal(self, api_key: str):
+    def _authenticate_customer_portal(self):
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
         mysql = MySQL()
         expected_api_key = mysql.get_api_key(self._customer_UID)
 
         # --- Return if API keys are equal ---
-        return expected_api_key == api_key
+        return expected_api_key == self._api_key
 
     
     def create_meter(self):
