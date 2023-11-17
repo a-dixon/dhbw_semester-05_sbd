@@ -1,7 +1,7 @@
 from flask import request, json, jsonify
 from . import customer_api_blueprint as bp
-from customer_api import CustomerAPI
-from response import Response
+from .customer_api import CustomerAPI
+from .response import Response
 
 
 @bp.route('meter-create', methods=['POST'])

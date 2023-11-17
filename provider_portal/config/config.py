@@ -1,3 +1,14 @@
+import os
+
+
+def get_secret(path):
+    ''' Read secret from file.'''
+    # --- Check if file path exists ---
+    existence = os.path.exists(path)
+    # --- Read secret from file if exists ---
+    if existence:
+        with open(path, 'r') as f:
+            return f.read()
 
 
 SERVER_CERT = "config/certificates/server_certificates/server-public-key.pem"
@@ -9,6 +20,11 @@ INFLUX_TOKEN = "DzFwd-VxKfwt4Y20okuIDbolk3X8bcsGLOMDM0mp2IsdImr-Uji5JrclSyHmuUo-
 INFLUX_BUCKET = "smartmeter"
 INFLUX_PROVIDER = "provider"
 
-class MySQLConfig(object):
-    #SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://provider:xEMRpr32b7Xg8nNCWNakgnDrSja8b5@10.0.1.40:3306/provider'
-    pass
+
+class MySQLConfig:
+    ''' MySQL configuration class'''
+    MYSQL_USER = 'provider'
+    MYSQL_PASSWORD = get_secret('config/secrets/db_password.txt')
+    MYSQL_HOST = '10.0.1.40'
+    MYSQL_PORT = 3306
+
