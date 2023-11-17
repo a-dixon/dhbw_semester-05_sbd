@@ -1,5 +1,4 @@
-import sys
-
+from datetime import timezone, timedelta
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from config import config
@@ -33,7 +32,7 @@ class InfluxDB:
         for table in tables:
             for record in table.records:
                 data.append({
-                    "time": record.get_time(),
+                    "time": record.get_time().isoformat(),
                     "value": record.get_value(),
                 })
 
@@ -57,16 +56,23 @@ class InfluxDB:
         except:
             return False
 
+    '''
     def delete(self, uid):
-        query = f'''
-                    from(bucket: "{self._bucket}")
-                    |> range(start: 0)
-                    |> filter(fn: (r) => r["uid"] == "{uid}")
-                    |> delete()
-                '''
         try:
-            query_api = self._client.query_api()
-            query_api.query(org=self._provider, query=query)
+            delete_api = self._client.delete_api()
+
+            # Get the current time
+            current_time = datetime.now()
+            new_time = current_time + timedelta(minutes=60)
+            rfc3339_format = '%Y-%m-%dT%H:%M:%SZ'
+            new_time_rfc3339 = new_time.strftime(rfc3339_format)
+            print(new_time_rfc3339, file=sys.stderr)
+
+            # Executing delete request
+            delete_api.delete("1970-01-01T00:00:00Z", new_time_rfc3339, '_measurement="consumption"', f'uid="{uid}"', org=self._provider, bucket=self._bucket)
+
             return True
-        except Exception:
+        except Exception as e:
+            print(f"Error deleting data: {e}")
             return False
+    '''

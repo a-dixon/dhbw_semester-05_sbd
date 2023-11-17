@@ -1,4 +1,5 @@
 import random
+import threading
 import time
 from datetime import datetime
 from app.api.api import APIHandler
@@ -51,7 +52,7 @@ class SmartMeter:
             self._delete(last_timestamp)
 
     def run_smart_meter(self, datapoints_unitl_send, time_between_datapoints):
-        while True:
+        while getattr(threading.current_thread(), "do_run", True):
             self._write_consumption(time_between_datapoints)
             if len(self._consumption) > datapoints_unitl_send:
                 self._transfer(datapoints_unitl_send)
