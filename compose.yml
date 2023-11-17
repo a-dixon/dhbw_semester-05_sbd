@@ -4,8 +4,10 @@ services:
     build: ./provider_portal
     container_name: provider_portal
     ports: 
-      - '443:443'
       - '8080:8080'
+      - '8081:8081'
+      - '8082:8082'
+
     volumes:
       - ./provider_portal:/app/provider_portal
       - ./smart_meter/config/certificates/smartmeter_certificates:/app/smart_meter/config/certificates/smartmeter_certificates
