@@ -2,9 +2,10 @@ import sys
 from uuid import uuid4
 from app.db.mysql.mysql import MySQL
 from app.db.influx.influx import InfluxDB
+from app.utils.certificates.gen_client_certificates import generate_client_certificate
 
 
-class CustomerAPI():
+class CustomerAPI:
     ''' Customer API class'''
 
     def __init__(self, customer_UID: str, api_key: str):
@@ -51,6 +52,8 @@ class CustomerAPI():
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
             raise err
+
+        generate_client_certificate(meter_UID)
         # TODO:
         # pass UID to Joshuas script
 
