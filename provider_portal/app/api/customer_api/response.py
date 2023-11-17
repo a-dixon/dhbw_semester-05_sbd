@@ -18,16 +18,26 @@ class Response:
 
     def __init__(self, dict):
         self._dict = dict
-        self.create_response()
+
+
+    def select_message(self, message):
+        return Response.MESSAGES.get(message)
 
 
     def create_response(self):
         if "data" in self._dict:
             return jsonify({"data": self._dict["data"]})
         
-        elif "meter_UID" in self._dict:
-            return jsonify({"message": self._dict["message"], "meterUID": self._dict["meter_UID"]})
-
         else:
-            return jsonify({"message": self._dict["message"]})
+            message, status_code = self.select_message(self._dict["message"])
+
+            if "meter_UID" in self._dict:
+                response = jsonify({"message": message, "meterUID": self._dict["meter_UID"]})
+                response.status_code = status_code
+                return response
+
+            else:
+                response = jsonify({"message": self._dict["message"]})
+                response.status_code = status_code
+                return response
     
