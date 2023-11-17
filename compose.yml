@@ -8,6 +8,7 @@ services:
       - '8080:8080'
     volumes:
       - ./provider_portal:/app/provider_portal
+      - ./smart_meter/config/certificates/smartmeter_certificates:/app/smart_meter/config/certificates/smartmeter_certificates
     networks:
       internal:
         ipv4_address: 10.0.1.10
@@ -31,6 +32,17 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: "setup"
+      DOCKER_INFLUXDB_INIT_USERNAME: "admin"
+      DOCKER_INFLUXDB_INIT_PASSWORD: /run/secrets/db_root_password
+      DOCKER_INFLUXDB_INIT_ORG: "provider"
+      DOCKER_INFLUXDB_INIT_BUCKET: "smartmeter"
+      DOCKER_INFLUXDB_INIT_RETENTION: "260w"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "DzFwd-VxKfwt4Y20okuIDbolk3X8bcsGLOMDM0mp2IsdImr-Uji5JrclSyHmuUo-QLgIUmyQYJXzRhqKjNmmXQ=="
+    secrets:
+      - db_password
+      - db_root_password
     volumes:
       - ./provider_portal/db_data/influx/config:/etc/influxdb2
       - ./provider_portal/db_data/influx/db:/var/lib/influxdb2
