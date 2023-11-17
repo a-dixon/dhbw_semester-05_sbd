@@ -14,9 +14,12 @@ def create_meter():
     customer_UID = data['customerUID']
 
     # Initiate customer api class
-    api = customer_api(customer_UID=customer_UID, api_key=api_key)
+    api = customer_api.CustomerAPI(customer_UID=customer_UID, api_key=api_key)
 
-    pass
+    
+    if not api == False:
+        meter_UID = api.create_meter()
+
 
 
 @bp.route('meter-measurements', methods=['GET'])
