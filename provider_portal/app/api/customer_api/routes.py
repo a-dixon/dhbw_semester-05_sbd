@@ -1,4 +1,4 @@
-from flask import request, json, jsonify
+from flask import request, json
 from . import customer_api_blueprint as bp
 from .customer_api import CustomerAPI
 from .response import Response
