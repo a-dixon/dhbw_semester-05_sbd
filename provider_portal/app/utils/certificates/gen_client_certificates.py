@@ -1,4 +1,6 @@
 import os
+import sys
+
 from app.utils.certificates.pki_helpers import generate_csr, generate_private_key
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -9,7 +11,7 @@ from config import config
 
 def generate_client_certificate(uid):
     output_folder = f"{config.CLIENT_CERT_DIRECTORY}/{uid}"
-    os.makedirs(output_folder, exist_ok=True)  # Erstelle den Ordner, wenn er nicht existiert
+    os.makedirs(output_folder, exist_ok=True)
 
     private_key_path = os.path.join(output_folder, "client-private-key.pem")
     csr_path = os.path.join(output_folder, "client-csr.pem")
@@ -22,10 +24,10 @@ def generate_client_certificate(uid):
     csr_file = open(csr_path, "rb")
     csr = x509.load_pem_x509_csr(csr_file.read(), default_backend())
 
-    ca_public_key_file = open("ca-public-key.pem", "rb")
+    ca_public_key_file = open(config.CA_PUBLIC_CERT, "rb")
     ca_public_key = x509.load_pem_x509_certificate(ca_public_key_file.read(), default_backend())
 
-    ca_private_key_file = open("ca-private-key.pem", "rb")
+    ca_private_key_file = open(config.CA_PRIVATE_CERT, "rb")
     ca_private_key = serialization.load_pem_private_key(ca_private_key_file.read(), None, default_backend())
 
     sign_csr(csr, ca_public_key, ca_private_key, public_key_path)
