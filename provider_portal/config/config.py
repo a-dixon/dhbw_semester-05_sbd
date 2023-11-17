@@ -13,6 +13,8 @@ def get_secret(path):
 
 SERVER_CERT = "config/certificates/server_certificates/server-public-key.pem"
 SERVER_KEY = "config/certificates/server_certificates/server-private-key.pem"
+CA_PUBLIC_CERT = "config/certificates/root_ca/ca-public-key.pem"
+CA_PRIVATE_CERT = "config/certificates/root_ca/ca-private-key.pem"
 CA_CERT = "config/certificates/root_ca/ca-public-key.pem"
 CLIENT_CERT_DIRECTORY = "/app/smart_meter/config/certificates/smartmeter_certificates"
 
