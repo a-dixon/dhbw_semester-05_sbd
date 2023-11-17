@@ -56,3 +56,6 @@ class SmartMeter:
             if len(self._consumption) > datapoints_unitl_send:
                 self._transfer(datapoints_unitl_send)
             time.sleep(0.2)
+
+    def get_uid(self):
+        return self._uid
