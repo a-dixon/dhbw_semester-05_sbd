@@ -1,5 +1,4 @@
 import sys
-
 from flask import request, json, jsonify
 from . import customer_api_blueprint as bp
 from .customer_api import CustomerAPI

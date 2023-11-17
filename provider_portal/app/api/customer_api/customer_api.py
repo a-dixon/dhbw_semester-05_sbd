@@ -37,17 +37,19 @@ class CustomerAPI:
         # --- Generate new meter UID ---
         meter_UID = self._generate_meter_UID()
 
-        # --- Insert into DB ---
         mysql = MySQL()
 
         try:
             mysql._insert_meter(meter_UID=meter_UID)
+
         except Exception as err:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
             raise err
+        
         try:
             mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
+        
         except Exception as err:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
@@ -92,6 +94,7 @@ class CustomerAPI:
 
         try:
             mysql.delete_customer_meter(meter_UID=meter_UID)
+
         except Exception as err:
             print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
@@ -108,6 +111,7 @@ class CustomerAPI:
         try:
             path = f"{config.CLIENT_CERT_DIRECTORY}/{meter_UID}"
             shutil.rmtree(path)
+
         except Exception as err:
             print('Smart meter could not be deleted from smartmeter wrapper.', file=sys.stderr)
             print(err, file=sys.stderr)
