@@ -68,10 +68,10 @@ def delete_meter():
     if auth_status:
         try:
             api.delete_meter()
-            create_status = True
-            delete_status = True
+            status_1 = True
+            status_2 = True
         except:
-            create_status = False
-            delete_status = True
+            status_1 = False
+            status_2 = True
 
-    return Response([auth_status, create_status, delete_status], meter_UID=meter_UID).to_response()
+    return Response([auth_status, status_1, status_2], meter_UID=meter_UID).to_response()
