@@ -44,12 +44,14 @@ class CustomerAPI():
         except Exception as err:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
+            raise err
 
         try:
             mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
         except:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
+            raise err
 
         # TODO:
         # pass UID to Joshuas script
