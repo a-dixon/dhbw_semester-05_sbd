@@ -22,13 +22,13 @@ def create_meter():
         
         try:
             meter_UID = api.create_meter()
-            create_status = True
-            delete_status = False
+            status_1 = True
+            status_2 = False
         except:
-            create_status = False
-            delete_status = False
+            status_1 = False
+            status_2 = False
     
-    return Response([auth_status, create_status, delete_status], meter_UID=meter_UID).to_response()
+    return Response([auth_status, status_1, status_2], meter_UID=meter_UID).to_response()
 
 
 @bp.route('meter-measurements', methods=['GET'])
@@ -45,7 +45,7 @@ def meter_measurements():
     end_time = data['endTime']
     data_interval = data['dataInterval']
 
-    api = customer_api(customer_UID=customer_UID, api_key=api_key)
+    api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
     res = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
 
     pass
