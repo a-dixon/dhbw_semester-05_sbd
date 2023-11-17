@@ -32,11 +32,25 @@ class CustomerAPI():
     
     def create_meter(self):
         ''' Create new smart meter.'''
-        self._meter_UID = self._generate_meter_UID()
+        # --- Generate new meter UID ---
+        meter_UID = self._generate_meter_UID()
+
+        # --- Insert into DB ---
+        mysql = MySQL()
+
+        try:
+            mysql._insert_meter(meter_UID=meter_UID)
+        except Exception as err:
+            print('Smart meter could not be inserted into meters database.', file=sys.stderr)
+            print(err, file=sys.stderr)
+
+        try:
+            mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
+        except:
+            print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
+            print(err, file=sys.stderr)
 
         # TODO:
-        # database entry in meters with meter_UID
-        # database entry in customers-meters with customer_UID and meter_UID
         # pass UID to Joshuas script
 
         return self._meter_UID
