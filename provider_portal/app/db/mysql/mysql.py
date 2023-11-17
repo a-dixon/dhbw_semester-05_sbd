@@ -1,16 +1,17 @@
 import sys
 import mysql.connector
 from mysql.connector import errorcode
+from config.config import MySQLConfig
 
 
 class MySQL:
     def __init__(self):
 
-        # --- Set connection data ---
-        self._user = 'provider'
-        self._password = 'xEMRpr32b7Xg8nNCWNakgnDrSja8b5'
-        self._host = '10.0.1.40'
-        self._port = 3306
+        # --- Load config data ---
+        self._user = MySQLConfig.MYSQL_USER
+        self._password = MySQLConfig.MYSQL_PASSWORD
+        self._host = MySQLConfig.MYSQL_HOST
+        self._port = MySQLConfig.MYSQL_PORT
 
 
     def _create_database(self, cursor):
@@ -67,7 +68,6 @@ class MySQL:
         # --- Create connector and cursor --- 
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
         cursor = cnx.cursor()
-
 
         # --- Try to set DB name ---
         try:
