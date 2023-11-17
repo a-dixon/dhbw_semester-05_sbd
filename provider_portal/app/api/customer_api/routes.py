@@ -74,4 +74,4 @@ def delete_meter():
             status_1 = False
             status_2 = True
 
-    return Response([auth_status, status_1, status_2], meter_UID=meter_UID).to_response()
+    return Response([auth_status, status_1, status_2]).to_response()
