@@ -1,5 +1,6 @@
 import ssl
 import threading
+import time
 
 from config import config
 from flask import Flask
@@ -43,6 +44,7 @@ if __name__ == '__main__':
     ssl_context.load_cert_chain(certfile=config.SERVER_CERT, keyfile=config.SERVER_KEY)
     ssl_context.verify_mode = ssl.CERT_REQUIRED
 
+    time.sleep(1)
     mysql_db = mysql.MySQL()
     mysql_db.create()
 
