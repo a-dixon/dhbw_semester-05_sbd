@@ -19,19 +19,19 @@ def create_meter():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-        
+
         try:
             meter_UID = api.create_meter()
             res = {"message": "success_create_meter", "meter_UID": meter_UID}
             return Response(dict=res).create_response()
-        
+
         except:
             res = {"message": "error_create_meter"}
             return Response(dict=res).create_response()
-        
+
     res = {"message": "error_authentication"}
     return Response(dict=res).create_response()
-            
+
 
 @bp.route('meter-measurements', methods=['GET'])
 def meter_measurements():
@@ -52,9 +52,10 @@ def meter_measurements():
 
     if auth_status:
 
-        res = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
+        res = api.get_meter_measurements(
+            start_time, end_time, data_interval, meter_UID)
         return Response(dict=res).create_response()
-    
+
     res = {"message": "error_authentication"}
     return Response(dict=res).create_response()
 
@@ -74,12 +75,15 @@ def delete_meter():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-        try:
-            api.delete_meter()
-            status_1 = True
-            status_2 = True
-        except:
-            status_1 = False
-            status_2 = True
 
-    return Response([auth_status, status_1, status_2]).to_response()
+        try:
+            api.delete_meter(meter_UID=meter_UID)
+            res = {"message": "success_delete_meter"}
+            return Response(dict=res).create_response()
+
+        except:
+            res = {"message": "error_meter_customer_combination"}
+            return Response(dict=res).create_response()
+
+    res = {"message": "error_authentication"}
+    return Response(dict=res).create_response()
