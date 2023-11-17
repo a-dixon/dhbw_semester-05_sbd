@@ -210,16 +210,35 @@ class MySQL:
         query = f'DELETE FROM meters WHERE meter_UID = "{meter_UID}"'
         cursor.execute(query)
 
-        # Check the affected row count
+        # --- Check the affected row count ---
         affected_rows = cursor.rowcount
 
-        # Commit the changes
+        # --- Commit the changes ---
         cnx.commit()
 
         # --- Cleanup ---
         cursor.close()
         cnx.close()
 
-        # Raise an error if no rows were affected
+        # --- Raise an error if no rows were affected ---
         if affected_rows == 0:
             raise ValueError(f"No meter found with meter_UID: {meter_UID}.")
+        
+    
+    def _insert_customer(self, customer_UID: str, api_key: str):
+        ''' Insert customer portal into customers table'''
+        # --- Create connector and cursor --- 
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        # --- Query database ---
+        query = (f'INSERT INTO customers (customer_UID, api_key) VALUES ("{customer_UID}, "{api_key}")')
+        cursor.execute(query)
+
+        # --- Commit the changes ---
+        cnx.commit()
+
+        # --- Cleanup ---
+        cursor.close()
+        cnx.close()
