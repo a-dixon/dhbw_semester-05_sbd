@@ -4,13 +4,10 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 import ipaddress
 
-def generate_private_key(filename: str, passphrase: str):
+def generate_private_key(filename: str):
     private_key = rsa.generate_private_key(
         public_exponent=65537, key_size=2048, backend=default_backend()
     )
-
-    utf8_pass = passphrase.encode("utf-8")
-    algorithm = serialization.BestAvailableEncryption(utf8_pass)
 
     with open(filename, "wb") as keyfile:
         keyfile.write(
