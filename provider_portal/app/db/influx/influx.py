@@ -56,3 +56,17 @@ class InfluxDB:
             return True
         except:
             return False
+
+    def delete(self, uid):
+        query = f'''
+                    from(bucket: "{self._bucket}")
+                    |> range(start: 0)
+                    |> filter(fn: (r) => r["uid"] == "{uid}")
+                    |> delete()
+                '''
+        try:
+            query_api = self._client.query_api()
+            query_api.query(org=self._provider, query=query)
+            return True
+        except Exception:
+            return False
