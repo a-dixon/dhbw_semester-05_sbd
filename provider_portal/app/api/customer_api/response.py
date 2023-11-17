@@ -37,7 +37,7 @@ class Response:
                 return response
 
             else:
-                response = jsonify({"message": self._dict["message"]})
+                response = jsonify({"message": message})
                 response.status_code = status_code
                 return response
     
