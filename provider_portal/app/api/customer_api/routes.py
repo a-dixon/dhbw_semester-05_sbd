@@ -51,7 +51,6 @@ def meter_measurements():
     auth_status = api.authenticate_customer_portal()
 
     if auth_status:
-
         res = api.get_meter_measurements(
             start_time, end_time, data_interval, meter_UID)
         return Response(dict=res).create_response()
