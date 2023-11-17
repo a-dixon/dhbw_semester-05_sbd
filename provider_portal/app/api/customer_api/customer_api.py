@@ -89,7 +89,6 @@ class CustomerAPI:
         ''' Delete smart meter.'''
         
         mysql = MySQL()
-        influxdb = InfluxDB()
 
         try:
             mysql.delete_customer_meter(meter_UID=meter_UID)
