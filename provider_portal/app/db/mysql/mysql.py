@@ -12,7 +12,7 @@ class MySQL:
         self._password = MySQLConfig.MYSQL_PASSWORD
         self._host = MySQLConfig.MYSQL_HOST
         self._port = MySQLConfig.MYSQL_PORT
-
+        self._DB_NAME = 'provider'
 
     def _create_database(self, cursor):
         ''' Create database.'''
@@ -27,9 +27,6 @@ class MySQL:
 
     def create(self):
         ''' Create database and tables.'''
-
-        # --- Define DB name and tables ---
-        self._DB_NAME = 'provider'
 
         self._TABLES = {}
         self._TABLES['customers'] = (
@@ -132,7 +129,7 @@ class MySQL:
         cnx.close()
 
     
-    def _get_api_key(self, customer_UID: str):
+    def get_api_key(self, customer_UID: str):
         ''' Returns API Key for corresponding customer UID.'''
 
         # --- Create connector and cursor --- 
