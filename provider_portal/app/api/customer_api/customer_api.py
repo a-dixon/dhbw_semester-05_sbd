@@ -11,9 +11,6 @@ class CustomerAPI:
     def __init__(self, customer_UID: str, api_key: str):
         self._customer_UID = customer_UID
         self._api_key = api_key
-
-        if not self._authenticate_customer_portal():
-            return False
    
 
     @staticmethod
@@ -22,7 +19,7 @@ class CustomerAPI:
         return str(uuid4())
     
 
-    def _authenticate_customer_portal(self):
+    def authenticate_customer_portal(self):
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
         mysql = MySQL()
@@ -54,8 +51,6 @@ class CustomerAPI:
             raise err
 
         generate_client_certificate(meter_UID)
-        # TODO:
-        # pass UID to Joshuas script
 
         return self._meter_UID
 
@@ -75,6 +70,7 @@ class CustomerAPI:
         ''' Delete smart meter.'''
         
         mysql = MySQL()
+        influxdb = InfluxDB()
 
         try:
             mysql._delete_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
@@ -85,6 +81,7 @@ class CustomerAPI:
         
         try:
             mysql.delete_meter(meter_UID=meter_UID)
+            influxdb.delete(meter_UID)
         except Exception as err:
             print('Smart meter could not be deleted from meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
