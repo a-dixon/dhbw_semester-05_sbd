@@ -35,7 +35,7 @@ services:
       DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influx_root_password
       DOCKER_INFLUXDB_INIT_ORG: "provider"
       DOCKER_INFLUXDB_INIT_BUCKET: "smartmeter"
-      DOCKER_INFLUXDB_INIT_RETENTION: "260w"
+      DOCKER_INFLUXDB_INIT_RETENTION: "520w"
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influx_token
     secrets:
       - influx_token
