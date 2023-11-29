@@ -1,5 +1,7 @@
 import sys
-from flask import request, json, jsonify
+import time
+
+from flask import request, json, jsonify, g
 from . import customer_api_blueprint as bp
 from .customer_api import CustomerAPI
 from .response import Response
@@ -7,16 +9,24 @@ from .response import Response
 
 @bp.route('meter-create', methods=['POST'])
 def create_meter():
-    ''' Route to create meter.'''
+    """
+    Route to create a meter.
+
+    Expects a POST request with the following:
+    - Headers: Authorization (API key)
+    - JSON body: {"customerUID": "customer_unique_id"}
+
+    Returns a JSON response with a message indicating the result.
+    """
     try:
-        # Extract api key
+        # Extract API key from headers
         api_key = request.headers['Authorization']
 
-        # Extract data from request body
+        # Extract data from the request body
         data = json.loads(request.data)
         customer_UID = data['customerUID']
 
-        # Initiate customer api class
+        # Initialize CustomerAPI class
         api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
         auth_status = api.authenticate_customer_portal()
     except Exception as err:
@@ -26,10 +36,10 @@ def create_meter():
 
     if auth_status:
         try:
+            # Attempt to create a meter
             meter_UID = api.create_meter()
             res = {"message": "success_create_meter", "meter_UID": meter_UID}
             return Response(dict=res).create_response()
-
         except Exception as err:
             print(f"An error has occurred when creating a smart meter: {err}", file=sys.stderr)
             res = {"message": "error_create_meter"}
@@ -41,18 +51,30 @@ def create_meter():
 
 @bp.route('meter-measurements', methods=['GET'])
 def meter_measurements():
-    ''' Route to get meter-measurements'''
+    """
+    Route to get meter measurements.
+
+    Expects a GET request with the following query parameters:
+    - customerUID: Customer unique ID
+    - meterUID: Meter unique ID
+    - startTime: Start time for data retrieval
+    - endTime: End time for data retrieval
+    - dataInterval: Data interval for aggregation
+
+    Returns a JSON response with the requested meter measurements or an error message.
+    """
     try:
-        # Extract api key
+        # Extract API key from headers
         api_key = request.headers['Authorization']
 
-        # Extract data from request body
+        # Extract data from the request query parameters
         customer_UID = request.args.get('customerUID')
         meter_UID = request.args.get('meterUID')
         start_time = request.args.get('startTime')
         end_time = request.args.get('endTime')
         data_interval = request.args.get('dataInterval')
 
+        # Initialize CustomerAPI class
         api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
         auth_status = api.authenticate_customer_portal()
     except Exception as err:
@@ -62,10 +84,12 @@ def meter_measurements():
 
     if auth_status:
         try:
+            # Attempt to retrieve meter measurements
             measurements = api.get_meter_measurements(start_time, end_time, data_interval, meter_UID)
             res = {"data": measurements}
             return Response(dict=res).create_response()
         except ValueError as err:
+            # Handle specific error for no meter found
             res = {"message": f"{err}"}
             return Response(dict=res).create_response()
         except Exception as err:
@@ -79,16 +103,25 @@ def meter_measurements():
 
 @bp.route('meter-delete', methods=['DELETE'])
 def delete_meter():
-    ''' Route to delete meter'''
+    """
+    Route to delete a meter.
+
+    Expects a DELETE request with the following:
+    - Headers: Authorization (API key)
+    - JSON body: {"customerUID": "customer_unique_id", "meterUID": "meter_unique_id"}
+
+    Returns a JSON response with a message indicating the result.
+    """
     try:
-        # Extract api key
+        # Extract API key from headers
         api_key = request.headers['Authorization']
 
-        # Extract data from request body
+        # Extract data from the request body
         data = json.loads(request.data)
         customer_UID = data['customerUID']
         meter_UID = data['meterUID']
 
+        # Initialize CustomerAPI class
         api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
         auth_status = api.authenticate_customer_portal()
     except Exception as err:
@@ -96,14 +129,12 @@ def delete_meter():
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
-
     if auth_status:
-
         try:
+            # Attempt to delete a meter
             api.delete_meter(meter_UID=meter_UID)
             res = {"message": "success_delete_meter"}
             return Response(dict=res).create_response()
-
         except:
             res = {"message": "error_meter_customer_combination"}
             return Response(dict=res).create_response()

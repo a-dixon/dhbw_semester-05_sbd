@@ -2,7 +2,9 @@ import os
 
 
 def get_secret(path):
-    ''' Read secret from file.'''
+    """
+    Read secret from file.
+    """
     # --- Check if file path exists ---
     existence = os.path.exists(path)
     # --- Read secret from file if exists ---
@@ -11,14 +13,18 @@ def get_secret(path):
             return f.read()
 
 class MySQLConfig:
-    ''' MySQL configuration class'''
+    """
+    MySQL configuration class
+    """
     MYSQL_USER = 'provider'
     MYSQL_PASSWORD = get_secret('config/secrets/db_password.txt')
     MYSQL_HOST = '10.0.1.40'
     MYSQL_PORT = 3306
 
 class InfluxConfig:
-    ''' InfluxDB configuration class'''
+    """
+    InfluxDB configuration class
+    """
     INFLUX_URL = "http://10.0.1.30:8086"
     INFLUX_TOKEN = get_secret("config/secrets/influx_token.txt")
     INFLUX_BUCKET = "smartmeter"

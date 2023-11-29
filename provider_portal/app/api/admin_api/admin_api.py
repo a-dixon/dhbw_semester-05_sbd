@@ -4,31 +4,55 @@ from app.db.mysql.mysql import MySQL
 
 
 class AdminAPI:
-    ''' Admin API class'''
+    """
+    Admin API class
+    """
 
     def __init__(self, api_key: str, username: str):
+        """
+        Initialize AdminAPI instance.
+
+        Args:
+            api_key (str): API key for authentication.
+            username (str): Username for authentication.
+        """
         self._username = username
         self._api_key = api_key
 
 
     @staticmethod
     def _generate_UID():
-        ''' Generate unique ID based on uuid4 function'''
+        """
+        Generate unique ID based on uuid4 function.
+
+        Returns:
+            str: Unique ID.
+        """
         return str(uuid4())
     
 
     def authenticate_admin_user(self):
-        ''' Assert api_key and username'''
+        """
+        Authenticate admin user based on API key and username.
+
+        Returns:
+            bool: True if authentication is successful, False otherwise.
+        """
         # --- Get expected API key from database ---
         mysql = MySQL()
-        expected_api_key = mysql.get_user_api_key(self._username)
+        expected_api_key = mysql.get_api_key(self._username)
 
         # --- Return if API keys are equal ---
         return expected_api_key == self._api_key
     
 
     def create_customer_portal(self):
-        ''' Create new customer portal'''
+        """
+        Create a new customer portal.
+
+        Returns:
+            tuple: Tuple containing customer_UID and api_key.
+        """
         # --- Generate customer_uid and api_key
         customer_UID = self._generate_UID()
         api_key = self._generate_UID()

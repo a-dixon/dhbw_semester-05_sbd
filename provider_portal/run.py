@@ -2,11 +2,15 @@ import ssl
 import sys
 import threading
 import time
-
-from config import config
+import logging
 from flask import Flask
 from app.db.mysql import mysql
+from config import config
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Flask applications
 customer_api_app = Flask(__name__)
 from app.api.customer_api import customer_api_blueprint as customer_api_routes
 customer_api_app.register_blueprint(customer_api_routes, url_prefix='/v1/provider')
@@ -19,29 +23,35 @@ admin_api_app = Flask(__name__)
 from app.api.admin_api import admin_api_blueprint as admin_api_routes
 admin_api_app.register_blueprint(admin_api_routes, url_prefix='/v1/admin')
 
-
 def run_app(app, host, port, ssl_context):
-    app.run(host=host, port=port, ssl_context=ssl_context)
-    return app
-
+    try:
+        app.run(host=host, port=port, ssl_context=ssl_context)
+    except Exception as e:
+        logger.error(f"Error running {app.name}: {e}")
 
 if __name__ == '__main__':
-    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH, cafile=config.CertificateConfig.CA_CERT)
+    # SSL context setup
+    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
     ssl_context.load_cert_chain(certfile=config.CertificateConfig.SERVER_CERT, keyfile=config.CertificateConfig.SERVER_KEY)
     ssl_context.verify_mode = ssl.CERT_REQUIRED
+    ssl_context.load_verify_locations(cafile=config.CertificateConfig.CA_CERT)
 
+    # MySQL database setup
     mysql_db = mysql.MySQL()
 
     while True:
         try:
+            # Attempt to connect to the database
             mysql_db.create()
-            print(f"The application has successfully connected to the database.", file=sys.stderr)
+            logger.info("The application has successfully connected to the database.")
             break
         except Exception as err:
-            print(f"The following error occurred when connecting to the database: {err}", file=sys.stderr)
-            print(f"A new attempt is made in 5 seconds.", file=sys.stderr)
+            # Handle database connection errors
+            logger.error(f"The following error occurred when connecting to the database: {err}")
+            logger.info("A new attempt is made in 5 seconds.")
             time.sleep(5)
 
+    # Threaded Flask applications
     smartmeter_thread = threading.Thread(target=run_app, args=(smartmeter_api_app, '10.0.1.10', 8080, ssl_context))
     smartmeter_thread.start()
 
@@ -51,6 +61,7 @@ if __name__ == '__main__':
     admin_thread = threading.Thread(target=run_app, args=(admin_api_app, '10.0.1.10', 8090, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     admin_thread.start()
 
+    # Wait for all threads to finish
     smartmeter_thread.join()
     provider_thread.join()
     admin_thread.join()

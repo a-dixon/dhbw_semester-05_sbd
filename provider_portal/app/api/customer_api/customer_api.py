@@ -9,21 +9,38 @@ from app.utils.certificates.gen_client_certificates import generate_client_certi
 
 
 class CustomerAPI:
-    ''' Customer API class'''
+    """
+    Customer API class for managing interactions providers.
+    """
 
     def __init__(self, customer_UID: str, api_key: str):
+        """
+        Initialize the CustomerAPI instance.
+
+        Parameters:
+            - customer_UID (str): Unique identifier for the customer.
+            - api_key (str): API key for authenticating the customer.
+        """
         self._customer_UID = customer_UID
         self._api_key = api_key
-   
 
     @staticmethod
     def _generate_meter_UID():
-        ''' Generate unique meter ID based on uuid4 function'''
+        """
+        Generate a unique meter ID using the uuid4 function.
+
+        Returns:
+            str: Unique meter ID.
+        """
         return str(uuid4())
-    
 
     def authenticate_customer_portal(self):
-        ''' Assert passed api_key is equal to api_key in db.'''
+        """
+        Authenticate the customer portal based on the provided API key.
+
+        Returns:
+            bool: True if authentication is successful, False otherwise.
+        """
         # --- Get expected API key from database ---
         mysql = MySQL()
 
@@ -35,9 +52,13 @@ class CustomerAPI:
         # --- Return if API keys are equal ---
         return expected_api_key == self._api_key
 
-    
     def create_meter(self):
-        ''' Create new smart meter.'''
+        """
+        Create a new smart meter, generating a unique meter UID and associating it with the customer.
+
+        Returns:
+            str: The newly generated meter UID.
+        """
         # --- Generate new meter UID ---
         meter_UID = self._generate_meter_UID()
 
@@ -50,10 +71,10 @@ class CustomerAPI:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
             raise err
-        
+
         try:
             mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
-        
+
         except Exception as err:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
@@ -63,10 +84,21 @@ class CustomerAPI:
 
         return meter_UID
 
-
     def get_meter_measurements(self, start_time, end_time, data_interval, meter_UID):
-        ''' Get smart meter measurements.'''
+        """
+        Get smart meter measurements within a specified time range.
 
+        Parameters:
+            - start_time (str): The start time for the measurements.
+            - end_time (str): The end time for the measurements.
+            - data_interval (str): The time interval between data points.
+            - meter_UID (str): The unique identifier of the smart meter.
+
+        Returns:
+            list: List of dictionaries containing timestamp and corresponding values.
+        Raises:
+            ValueError: If the specified time range is in the future or exceeds the maximum data points allowed.
+        """
         # Check if end_time is in the future
         current_time = datetime.now(timezone(timedelta(hours=1)))
         if datetime.fromisoformat(end_time.replace(" ", "+")) > current_time:
@@ -86,14 +118,20 @@ class CustomerAPI:
         converted_data_interval = data_interval + "s"
 
         influxdb = InfluxDB()
-        reading = influxdb.read(start_time=converted_start_time, end_time=converted_end_time, interval=converted_data_interval, uid=meter_UID, measurement="consumption")
+        reading = influxdb.read(start_time=converted_start_time, end_time=converted_end_time,
+                                interval=converted_data_interval, uid=meter_UID, measurement="consumption")
 
         return reading
 
-
     def delete_meter(self, meter_UID):
-        ''' Delete smart meter.'''
-        
+        """
+        Delete a smart meter, including its association with the customer and certificate.
+
+        Parameters:
+            - meter_UID (str): The unique identifier of the smart meter.
+        Raises:
+            Exception: If deletion from the database or file system fails.
+        """
         mysql = MySQL()
 
         try:
@@ -103,7 +141,7 @@ class CustomerAPI:
             print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
             print(err, file=sys.stderr)
             raise err
-        
+
         try:
             mysql.delete_meter(meter_UID=meter_UID)
             # influxdb.delete(meter_UID)
