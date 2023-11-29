@@ -32,14 +32,14 @@ services:
     environment:
       DOCKER_INFLUXDB_INIT_MODE: "setup"
       DOCKER_INFLUXDB_INIT_USERNAME: "admin"
-      DOCKER_INFLUXDB_INIT_PASSWORD: /run/secrets/db_root_password
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influx_root_password
       DOCKER_INFLUXDB_INIT_ORG: "provider"
       DOCKER_INFLUXDB_INIT_BUCKET: "smartmeter"
       DOCKER_INFLUXDB_INIT_RETENTION: "260w"
-      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "DzFwd-VxKfwt4Y20okuIDbolk3X8bcsGLOMDM0mp2IsdImr-Uji5JrclSyHmuUo-QLgIUmyQYJXzRhqKjNmmXQ=="
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influx_token
     secrets:
-      - db_password
-      - db_root_password
+      - influx_token
+      - influx_root_password
     volumes:
       - ./provider_portal/db_data/influx/config:/etc/influxdb2
       - ./provider_portal/db_data/influx/db:/var/lib/influxdb2
@@ -85,6 +85,10 @@ secrets:
     file: provider_portal/config/secrets/db_password.txt
   db_root_password:
     file: provider_portal/config/secrets/db_root_password.txt
+  influx_root_password:
+    file: provider_portal/config/secrets/influx_root_password.txt
+  influx_token:
+    file: provider_portal/config/secrets/influx_token.txt
 
 
 networks:
