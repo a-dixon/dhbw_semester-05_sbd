@@ -1,4 +1,5 @@
 import ssl
+import sys
 import threading
 import time
 
@@ -25,21 +26,29 @@ def run_app(app, host, port, ssl_context):
 
 
 if __name__ == '__main__':
-    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH, cafile=config.CA_CERT)
-    ssl_context.load_cert_chain(certfile=config.SERVER_CERT, keyfile=config.SERVER_KEY)
+    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH, cafile=config.CertificateConfig.CA_CERT)
+    ssl_context.load_cert_chain(certfile=config.CertificateConfig.SERVER_CERT, keyfile=config.CertificateConfig.SERVER_KEY)
     ssl_context.verify_mode = ssl.CERT_REQUIRED
 
-    time.sleep(1)
     mysql_db = mysql.MySQL()
-    mysql_db.create()
+
+    while True:
+        try:
+            mysql_db.create()
+            print(f"The application has successfully connected to the database.", file=sys.stderr)
+            break
+        except Exception as err:
+            print(f"The following error occurred when connecting to the database: {err}", file=sys.stderr)
+            print(f"A new attempt is made in 5 seconds.", file=sys.stderr)
+            time.sleep(5)
 
     smartmeter_thread = threading.Thread(target=run_app, args=(smartmeter_api_app, '10.0.1.10', 8080, ssl_context))
     smartmeter_thread.start()
 
-    provider_thread = threading.Thread(target=run_app, args=(customer_api_app, '10.0.1.10', 443, (config.SERVER_CERT, config.SERVER_KEY)))
+    provider_thread = threading.Thread(target=run_app, args=(customer_api_app, '10.0.1.10', 443, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     provider_thread.start()
 
-    admin_thread = threading.Thread(target=run_app, args=(admin_api_app, '10.0.1.10', 8090, (config.SERVER_CERT, config.SERVER_KEY)))
+    admin_thread = threading.Thread(target=run_app, args=(admin_api_app, '10.0.1.10', 8090, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     admin_thread.start()
 
     smartmeter_thread.join()
