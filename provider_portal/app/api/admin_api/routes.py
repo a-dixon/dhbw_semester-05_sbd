@@ -19,7 +19,7 @@ def create_customer_portal():
     if auth_status:
 
         try:
-            customer_UID, customer_api_key = api.create_customer()
+            customer_UID, customer_api_key = api.create_customer_portal()
             res = {"message": "success_create_customer", "customer_UID": customer_UID, "customer_api_key": customer_api_key}
             return Response(dict=res).create_response()
         
