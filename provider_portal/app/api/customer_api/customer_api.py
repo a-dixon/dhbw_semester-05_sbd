@@ -26,7 +26,11 @@ class CustomerAPI:
         ''' Assert passed api_key is equal to api_key in db.'''
         # --- Get expected API key from database ---
         mysql = MySQL()
-        expected_api_key = mysql.get_api_key(self._customer_UID)
+
+        try:
+            expected_api_key = mysql.get_api_key(self._customer_UID)
+        except:
+            return False
 
         # --- Return if API keys are equal ---
         return expected_api_key == self._api_key
@@ -109,7 +113,7 @@ class CustomerAPI:
             raise err
 
         try:
-            path = f"{config.CLIENT_CERT_DIRECTORY}/{meter_UID}"
+            path = f"{config.CertificateConfig.CLIENT_CERT_DIRECTORY}/{meter_UID}"
             shutil.rmtree(path)
 
         except Exception as err:
