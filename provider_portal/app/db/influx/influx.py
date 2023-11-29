@@ -6,10 +6,10 @@ from config import config
 
 class InfluxDB:
     def __init__(self):
-        self._token = config.INFLUX_TOKEN
-        self._bucket = config.INFLUX_BUCKET
-        self._provider = config.INFLUX_PROVIDER
-        self._url = config.INFLUX_URL
+        self._token = config.InfluxConfig.INFLUX_TOKEN
+        self._bucket = config.InfluxConfig.INFLUX_BUCKET
+        self._provider = config.InfluxConfig.INFLUX_PROVIDER
+        self._url = config.InfluxConfig.INFLUX_URL
         self._client = InfluxDBClient(url=self._url, token=self._token, org=self._provider)
 
         bucket_api = self._client.buckets_api()

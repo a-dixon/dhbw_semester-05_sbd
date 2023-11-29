@@ -10,7 +10,7 @@ from config import config
 
 
 def generate_client_certificate(uid):
-    output_folder = f"{config.CLIENT_CERT_DIRECTORY}/{uid}"
+    output_folder = f"{config.CertificateConfig.CLIENT_CERT_DIRECTORY}/{uid}"
     os.makedirs(output_folder, exist_ok=True)
 
     private_key_path = os.path.join(output_folder, "client-private-key.pem")
@@ -24,10 +24,10 @@ def generate_client_certificate(uid):
     csr_file = open(csr_path, "rb")
     csr = x509.load_pem_x509_csr(csr_file.read(), default_backend())
 
-    ca_public_key_file = open(config.CA_PUBLIC_CERT, "rb")
+    ca_public_key_file = open(config.CertificateConfig.CA_PUBLIC_CERT, "rb")
     ca_public_key = x509.load_pem_x509_certificate(ca_public_key_file.read(), default_backend())
 
-    ca_private_key_file = open(config.CA_PRIVATE_CERT, "rb")
+    ca_private_key_file = open(config.CertificateConfig.CA_PRIVATE_CERT, "rb")
     ca_private_key = serialization.load_pem_private_key(ca_private_key_file.read(), None, default_backend())
 
     sign_csr(csr, ca_public_key, ca_private_key, public_key_path)
