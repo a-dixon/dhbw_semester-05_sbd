@@ -36,7 +36,7 @@ class AdminAPI:
         mysql = MySQL()
 
         try:
-            mysql._insert_customer(customer_UID=customer_UID, api_key=api_key)
+            mysql.insert_customer(customer_UID=customer_UID, api_key=api_key)
 
         except Exception as err:
             print('Customer portal could not be inserted into database.', file=sys.stderr)
