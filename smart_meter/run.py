@@ -45,8 +45,8 @@ def check_for_changed_smart_meters(path):
         print("Smartmeter mit der UID: " + uid + " beendet", file=sys.stderr)
 
 if __name__ == '__main__':
-    start_smart_meters_in_parallel(config.CERT_DIRECTORY)
+    start_smart_meters_in_parallel(config.CertificateConfig.CERT_DIRECTORY)
 
     while True:
         time.sleep(5)
-        check_for_changed_smart_meters(config.CERT_DIRECTORY)
+        check_for_changed_smart_meters(config.CertificateConfig.CERT_DIRECTORY)

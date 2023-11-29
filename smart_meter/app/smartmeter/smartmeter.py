@@ -10,7 +10,7 @@ class SmartMeter:
     def __init__(self, uid):
         self._consumption = []
         self._uid = uid
-        self._api = APIHandler(config.API_URL, uid)
+        self._api = APIHandler(config.APIConfig.API_URL, uid)
 
     @staticmethod
     def _generate_consumption(current_time):
