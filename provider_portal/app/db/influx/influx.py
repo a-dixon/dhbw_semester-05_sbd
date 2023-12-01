@@ -18,7 +18,7 @@ class InfluxDB:
         self._bucket = config.InfluxConfig.INFLUX_BUCKET
         self._provider = config.InfluxConfig.INFLUX_PROVIDER
         self._url = config.InfluxConfig.INFLUX_URL
-        self._client = InfluxDBClient(url=self._url, token=self._token, org=self._provider)
+        self._client = InfluxDBClient(url=self._url, token=self._token, org=self._provider, ssl=True, verify_ssl=False)
 
         bucket_api = self._client.buckets_api()
         if not bucket_api.find_bucket_by_name(self._bucket):
