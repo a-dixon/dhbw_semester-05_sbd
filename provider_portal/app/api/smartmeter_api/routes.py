@@ -1,4 +1,7 @@
+import sys
+
 from app.api.smartmeter_api.response import Response
+from app.utils.validation.string_validation import input_validation
 from . import smartmeter_api_blueprint as bp
 from flask import request, jsonify
 from . import smartmeter_api
@@ -24,15 +27,22 @@ def meter_measurements():
     Returns:
         JSON: Response JSON containing authentication and database status.
     """
-    data = request.json
+    try:
+        data = request.json
 
-    # Extract client certificate and meter UID from the request
-    client_cert_raw = request.environ.get("SSL_CLIENT_CERT")
-    meter_uid = data["meterUID"]
+        # Extract client certificate and meter UID from the request
+        client_cert_raw = request.environ.get("SSL_CLIENT_CERT")
+        meter_uid = data["meterUID"]
 
-    api = smartmeter_api.SmartmeterAPI(client_cert_raw, meter_uid)
-
-    auth_status = api.authenticate_smartmeter()
+        if input_validation(meter_uid):
+            api = smartmeter_api.SmartmeterAPI(client_cert_raw, meter_uid)
+            auth_status = api.authenticate_smartmeter()
+        else:
+            raise ValueError("error_decoding")
+    except Exception as err:
+        print(f"An error has occurred when getting meter measurements: {err}", file=sys.stderr)
+        res = {"message": "error_decoding"}
+        return Response(dict=res).create_response()
 
     db_status = False
     # If authentication is successful, attempt to add measurements to the database
