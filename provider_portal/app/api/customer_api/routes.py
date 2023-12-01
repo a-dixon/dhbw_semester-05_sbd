@@ -5,6 +5,34 @@ from flask import request, json, jsonify, g
 from . import customer_api_blueprint as bp
 from .customer_api import CustomerAPI
 from .response import Response
+from app.utils.validation.string_validation import input_validation
+
+
+# Dictionary to store IP addresses, requests, and timestamps
+request_tracker = {}
+
+
+@bp.before_request
+def before_request():
+    """
+    Function to check rate limit before each request.
+    """
+    # Extracting the IP address from the request
+    ip_address = request.remote_addr
+
+    # Initialize the request tracker for the IP address if not present
+    request_tracker.setdefault(ip_address, {})
+
+    # Removing entries older than 5 minutes
+    current_time = time.time()
+    request_tracker[ip_address] = {
+        k: v for k, v in request_tracker[ip_address].items() if current_time - v <= 300
+    }
+
+    # Check if the IP has exceeded the maximum allowed requests
+    if len(request_tracker.get(ip_address, {})) >= 300:
+        res = {"message": "error_over_maximum"}
+        return Response(dict=res).create_response()
 
 
 @bp.route('meter-create', methods=['POST'])
@@ -26,9 +54,12 @@ def create_meter():
         data = json.loads(request.data)
         customer_UID = data['customerUID']
 
-        # Initialize CustomerAPI class
-        api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
-        auth_status = api.authenticate_customer_portal()
+        if input_validation(customer_UID):
+            # Initialize CustomerAPI class
+            api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
+            auth_status = api.authenticate_customer_portal()
+        else:
+            raise ValueError("error_decoding")
     except Exception as err:
         print(f"An error has occurred when creating a smart meter: {err}", file=sys.stderr)
         res = {"message": "error_decoding"}
@@ -74,9 +105,12 @@ def meter_measurements():
         end_time = request.args.get('endTime')
         data_interval = request.args.get('dataInterval')
 
-        # Initialize CustomerAPI class
-        api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
-        auth_status = api.authenticate_customer_portal()
+        if input_validation([customer_UID, meter_UID, start_time, end_time, data_interval]):
+            # Initialize CustomerAPI class
+            api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
+            auth_status = api.authenticate_customer_portal()
+        else:
+            raise ValueError("error_decoding")
     except Exception as err:
         print(f"An error has occurred within the get measurements: {err}", file=sys.stderr)
         res = {"message": "error_decoding"}
@@ -121,9 +155,12 @@ def delete_meter():
         customer_UID = data['customerUID']
         meter_UID = data['meterUID']
 
-        # Initialize CustomerAPI class
-        api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
-        auth_status = api.authenticate_customer_portal()
+        if input_validation([customer_UID, meter_UID]):
+            # Initialize CustomerAPI class
+            api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
+            auth_status = api.authenticate_customer_portal()
+        else:
+            raise ValueError("error_decoding")
     except Exception as err:
         print(f"An error has occurred when deleting a smart meter: {err}", file=sys.stderr)
         res = {"message": "error_decoding"}
