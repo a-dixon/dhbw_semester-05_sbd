@@ -19,6 +19,7 @@ class MySQL:
         self._host = MySQLConfig.MYSQL_HOST
         self._port = MySQLConfig.MYSQL_PORT
         self._DB_NAME = 'provider'
+        self._ssl = {}
 
     def _create_database(self, cursor):
         """
@@ -75,7 +76,7 @@ class MySQL:
         }
 
         # Create connector and cursor
-        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port, ssl_disabled=False)
         cursor = cnx.cursor()
 
         # Try to select the database
@@ -112,41 +113,78 @@ class MySQL:
         cursor.close()
         cnx.close()
 
-    def insert_test_data(self):
+    def insert_user(self, username: str, api_key: str):
         """
-        Inserts test data into the 'customers' table.
+        Inserts a user into the 'users' table.
+
+        Args:
+            username (str): The username of the user.
+            api_key (str): The API key for the user.
         """
         # Create connector and cursor
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
-        cursor = cnx.cursor()
+        cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Test data
-        customer_UID_1 = '123456'
-        customer_api_key_1 = 'abcdefg'
-        customer_UID_2 = '654321'
-        customer_api_key_2 = 'gfedcba'
+        try:
+            # Query database
+            query = ("INSERT INTO users (username, api_key) VALUES (%s, %s)")
+            cursor.execute(query, (username, api_key))
 
-        # SQL statements for inserting test data
-        add_customer_1 = "INSERT INTO customers (customer_UID, api_key) VALUES (%s, %s)"
-        add_customer_2 = "INSERT INTO customers (customer_UID, api_key) VALUES (%s, %s)"
+            # Commit the changes
+            cnx.commit()
+        except mysql.connector.Error as err:
+            if err.errno == mysql.connector.errors.IntegrityError:
+                print(f'Error: Duplicate entry for username: {username}', file=sys.stderr)
+            else:
+                print(f'Error inserting admin user: {username}', file=sys.stderr)
+                print(err, file=sys.stderr)
+                cnx.rollback()
 
-        # Execute SQL statements
-        cursor.execute(add_customer_1, (customer_UID_1, customer_api_key_1))
-        cursor.execute(add_customer_2, (customer_UID_2, customer_api_key_2))
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
-        # Commit the changes
-        cnx.commit()
+    def get_api_key_from_user(self, username: str):
+        """
+        Retrieves the API key for a given username.
 
-        cursor.close()
-        cnx.close()
+        Args:
+            username (str): The username of the admin user.
 
-    def get_api_key(self, username: str):
+        Returns:
+            str: The API key for the corresponding username, or None if not found.
+        """
+        # Create connector and cursor
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        try:
+            # Query database
+            query = ("SELECT api_key FROM users WHERE username=%s")
+            cursor.execute(query, (username,))
+            api_key = cursor.fetchone()[0] if cursor.rowcount > 0 else None
+        except mysql.connector.Error as err:
+            print(f'Error reading api_key from admin user: {username}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
+
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
+
+        return api_key
+
+    def get_api_key_from_customer(self, customer_UID: str):
         """
         Retrieves the API key for a given customer UID.
 
         Args:
-            username (str): The username of the admin user.
+            customer_UID (str): The username of the admin user.
 
         Returns:
             str: The API key for the corresponding customer UID, or None if not found.
@@ -156,18 +194,25 @@ class MySQL:
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Query database
-        query = ("SELECT api_key FROM users WHERE username=%s")
-        cursor.execute(query, (username,))
-        api_key = cursor.fetchone()[0] if cursor.rowcount > 0 else None
+        try:
+            # Query database
+            query = ("SELECT api_key FROM customers WHERE customer_UID=%s")
+            cursor.execute(query, (customer_UID,))
+            api_key = cursor.fetchone()[0] if cursor.rowcount > 0 else None
+        except mysql.connector.Error as err:
+            print(f'Error reading api_key from customer: {customer_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
         return api_key
 
-    def _insert_meter(self, meter_UID: str):
+    def insert_meter(self, meter_UID: str):
         """
         Inserts a smartmeter UID into the 'meters' table.
 
@@ -179,16 +224,23 @@ class MySQL:
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Query database
-        query = ("INSERT INTO meters (meter_UID) VALUES (%s)")
-        cursor.execute(query, (meter_UID,))
-        cnx.commit()
+        try:
+            # Query database
+            query = ("INSERT INTO meters (meter_UID) VALUES (%s)")
+            cursor.execute(query, (meter_UID,))
+            cnx.commit()
+        except mysql.connector.Error as err:
+            print(f'Error creating smart meter with meter_UID: {meter_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
-    def _insert_customer_meter(self, customer_UID: str, meter_UID: str):
+    def insert_customer_meter(self, customer_UID: str, meter_UID: str):
         """
         Inserts a customer UID and smartmeter UID into the 'customers_meters' table.
 
@@ -201,14 +253,21 @@ class MySQL:
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Query database
-        query = ("INSERT INTO customers_meters (customer_UID, meter_UID) VALUES (%s, %s)")
-        cursor.execute(query, (customer_UID, meter_UID))
-        cnx.commit()
+        try:
+            # Query database
+            query = ("INSERT INTO customers_meters (customer_UID, meter_UID) VALUES (%s, %s)")
+            cursor.execute(query, (customer_UID, meter_UID))
+            cnx.commit()
+        except mysql.connector.Error as err:
+            print(f'Error creating smart meter with meter_UID: {meter_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
     def delete_customer_meter(self, meter_UID: str):
         """
@@ -222,14 +281,21 @@ class MySQL:
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Query database
-        query = ("DELETE FROM customers_meters WHERE meter_UID = %s")
-        cursor.execute(query, (meter_UID,))
-        cnx.commit()
+        try:
+            # Query database
+            query = ("DELETE FROM customers_meters WHERE meter_UID = %s")
+            cursor.execute(query, (meter_UID,))
+            cnx.commit()
+        except mysql.connector.Error as err:
+            print(f'Error deleting smart meter with meter_UID: {meter_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
     def delete_meter(self, meter_UID: str):
         """
@@ -242,20 +308,26 @@ class MySQL:
         cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
+        try:
+            # Query database
+            query = ("DELETE FROM meters WHERE meter_UID = %s")
+            cursor.execute(query, (meter_UID,))
 
-        # Query database
-        query = ("DELETE FROM meters WHERE meter_UID = %s")
-        cursor.execute(query, (meter_UID,))
+            # Check the affected row count
+            affected_rows = cursor.rowcount
 
-        # Check the affected row count
-        affected_rows = cursor.rowcount
+            # Commit the changes
+            cnx.commit()
+        except mysql.connector.Error as err:
+            print(f'Error deleting smart meter with meter_UID: {meter_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Commit the changes
-        cnx.commit()
-
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
 
         # Raise an error if no rows were affected
         if affected_rows == 0:
@@ -274,13 +346,121 @@ class MySQL:
         cursor = cnx.cursor(buffered=True)
         cnx.database = self._DB_NAME
 
-        # Query database
-        query = ("INSERT INTO customers (customer_UID, api_key) VALUES (%s, %s)")
-        cursor.execute(query, (customer_UID, api_key))
+        try:
+            # Query database
+            query = ("INSERT INTO customers (customer_UID, api_key) VALUES (%s, %s)")
+            cursor.execute(query, (customer_UID, api_key))
 
-        # Commit the changes
-        cnx.commit()
+            # Commit the changes
+            cnx.commit()
+        except mysql.connector.Error as err:
+            print(f'Error creating customer portal with customer_UID: {customer_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
 
-        # Cleanup
-        cursor.close()
-        cnx.close()
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
+
+    def delete_customer(self, customer_UID: str):
+        """
+        Deletes a customer portal based on customer_UID.
+
+        Args:
+            customer_UID (str): The customer UID to be deleted.
+        """
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        try:
+            # Delete from the 'customers' table
+            delete_customer_query = "DELETE FROM customers WHERE customer_UID = %s"
+            cursor.execute(delete_customer_query, (customer_UID,))
+
+            # Commit the changes
+            cnx.commit()
+
+            # Check the affected row count
+            affected_rows = cursor.rowcount
+
+        except mysql.connector.Error as err:
+            print(f'Error deleting customer portal with customer_UID: {customer_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            cnx.rollback()
+            raise err
+
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
+
+        # Raise an error if no rows were affected
+        if affected_rows == 0:
+            raise ValueError(f"No customer found with customer_UID: {customer_UID}.")
+
+    def list_customer_portals(self):
+        """
+        Lists all customer portals in the 'customers' table.
+
+        Returns:
+            list: A list of dictionaries containing customer_UID and api_key.
+        """
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor(buffered=True)
+        cnx.database = self._DB_NAME
+
+        try:
+            # Query to select all customer portals
+            query = "SELECT customer_UID, api_key FROM customers"
+            cursor.execute(query)
+
+            # Fetch all rows
+            customer_portals = [{'customer_UID': row[0], 'api_key': row[1]} for row in cursor.fetchall()]
+
+            return customer_portals
+
+        except mysql.connector.Error as err:
+            print(f'Error listing customer portals: {err}', file=sys.stderr)
+            raise err
+
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
+
+    def list_smart_meters_for_customer(self, customer_UID: str):
+        """
+        Lists all smart meters associated with a customer.
+
+        Args:
+            customer_UID (str): The customer UID.
+
+        Returns:
+            list: A list of meter_UIDs associated with the customer.
+        """
+        cnx = mysql.connector.connect(user=self._user, password=self._password, host=self._host, port=self._port)
+        cursor = cnx.cursor()
+        cnx.database = self._DB_NAME
+
+        try:
+            # Query database to select all meter_UIDs for a given customer
+            query = "SELECT meter_UID FROM customers_meters WHERE customer_UID = %s"
+            cursor.execute(query, (customer_UID,))
+
+            # Fetch all rows
+            meters = [{'meter_UID': row[0]} for row in cursor.fetchall()]
+
+            return meters
+
+        except mysql.connector.Error as err:
+            print(f'Error listing smart meters for customer_UID: {customer_UID}', file=sys.stderr)
+            print(err, file=sys.stderr)
+            raise err
+
+        finally:
+            # Cleanup
+            cursor.close()
+            cnx.close()
