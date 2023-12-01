@@ -8,9 +8,10 @@ class Response:
 
     # Define messages and their corresponding HTTP status codes
     MESSAGES = {
-        "success": ("Die Messpunkte wurden erfolgreich in die Datenbank geschrieben", 200),
-        "error_database": ("Die Messpunkte konnten nicht in die Datenbank geschrieben werden", 500),
-        "error_certificate": ("Smart Meter Zertifikat nicht am API Endpoint hinterlegt", 400)
+        "success": ("Die Messpunkte wurden erfolgreich in die Datenbank geschrieben.", 200),
+        "error_database": ("Die Messpunkte konnten nicht in die Datenbank geschrieben werden.", 500),
+        "error_decoding": ("Das Format konnte nicht dekodiert werden.", 400),
+        "error_certificate": ("Smart Meter Zertifikat nicht am API Endpoint hinterlegt.", 400)
     }
 
     def __init__(self, boolean_patterns):
