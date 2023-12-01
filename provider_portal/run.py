@@ -6,6 +6,7 @@ import logging
 from flask import Flask
 from app.db.mysql import mysql
 from config import config
+from app.utils.init.create_admin_users import insert_users_from_file
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,6 +23,9 @@ smartmeter_api_app.register_blueprint(smartmeter_api_routes, url_prefix='/v1/sma
 admin_api_app = Flask(__name__)
 from app.api.admin_api import admin_api_blueprint as admin_api_routes
 admin_api_app.register_blueprint(admin_api_routes, url_prefix='/v1/admin')
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 def run_app(app, host, port, ssl_context):
     try:
@@ -50,6 +54,10 @@ if __name__ == '__main__':
             logger.error(f"The following error occurred when connecting to the database: {err}")
             logger.info("A new attempt is made in 5 seconds.")
             time.sleep(5)
+
+    if config.InitAdminUsers.ADMIN_INIT_ACTIVATED:
+        # Initialize admin users from file
+        insert_users_from_file(mysql_db)
 
     # Threaded Flask applications
     smartmeter_thread = threading.Thread(target=run_app, args=(smartmeter_api_app, '10.0.1.10', 8080, ssl_context))
