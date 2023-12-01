@@ -8,5 +8,6 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 ENV FLASK_ENV=development
+ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
 CMD [ "python3", "run.py" ]
