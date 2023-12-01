@@ -26,7 +26,7 @@ def generate_client_certificate(uid):
 
     server_private_key = generate_private_key(private_key_path)
     generate_csr(server_private_key, filename=csr_path, country="DE", state="Berlin", locality="Berlin", org="Trusty",
-                 alt_dns=[], alt_ip=["127.0.0.1", "128.140.89.189"], hostname=uid)
+                 alt_dns=[], alt_ip=["127.0.0.1", "128.140.89.189", "10.0.1.10", "10.0.1.30", "10.0.1.40"], hostname=uid)
 
     with open(csr_path, "rb") as csr_file:
         csr = x509.load_pem_x509_csr(csr_file.read(), default_backend())
