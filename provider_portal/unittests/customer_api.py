@@ -4,16 +4,16 @@ from datetime import datetime, timedelta
 
 import requests
 
+
 class TestCustomerAPI(unittest.TestCase):
     meter_uid = None
 
     def setUp(self):
-        self.api_key = "abcdefg"
-        self.customer_uid = "123456"
+        self.api_key = "780ae4e6-6876-4bd0-bc6a-f1384963d1a8"
+        self.customer_uid = "bac1a571-4603-4655-9f88-6a746989afa0"
         self.api_url_create = "https://10.0.1.10/v1/provider/meter-create"
         self.api_url_measurements = f"https://10.0.1.10/v1/provider/meter-measurements"
         self.api_url_delete = "https://10.0.1.10/v1/provider/meter-delete"
-
 
     def test_meter_creation_success(self):
         headers = {"Authorization": f"{self.api_key}", "Content-Type": "application/json"}
@@ -161,7 +161,8 @@ class TestCustomerAPI(unittest.TestCase):
         result = response.json()
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(result["message"],"Die Anzahl der angeforderten Messpunkte überschreitet das Maximum. Bitte reduzieren Sie das Abfrageintervall oder teilen Sie die Anfrage auf.")
+        self.assertEqual(result["message"],
+                         "Die Anzahl der angeforderten Messpunkte überschreitet das Maximum. Bitte reduzieren Sie das Abfrageintervall oder teilen Sie die Anfrage auf.")
 
     def test_meter_measurements_max_points(self):
         headers = {"Authorization": f"{self.api_key}"}
@@ -181,7 +182,7 @@ class TestCustomerAPI(unittest.TestCase):
         result = response.json()
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(result["message"],"Keine Daten im angegebenen Zeitraum vorhanden.")
+        self.assertEqual(result["message"], "Keine Daten im angegebenen Zeitraum vorhanden.")
 
     def test_meter_deletion_success(self):
         headers = {"Authorization": f"{self.api_key}", "Content-Type": "application/json"}
@@ -232,6 +233,7 @@ class TestCustomerAPI(unittest.TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(result["message"], "Die Kombination von Meter UID und Customer UID existiert nicht.")
+
 
 if __name__ == '__main__':
     unittest.main()
