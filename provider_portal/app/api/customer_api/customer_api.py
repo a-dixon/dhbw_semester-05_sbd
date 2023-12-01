@@ -41,11 +41,12 @@ class CustomerAPI:
         Returns:
             bool: True if authentication is successful, False otherwise.
         """
+
         # --- Get expected API key from database ---
         mysql = MySQL()
 
         try:
-            expected_api_key = mysql.get_api_key(self._customer_UID)
+            expected_api_key = mysql.get_api_key_from_customer(self._customer_UID)
         except:
             return False
 
@@ -65,7 +66,7 @@ class CustomerAPI:
         mysql = MySQL()
 
         try:
-            mysql._insert_meter(meter_UID=meter_UID)
+            mysql.insert_meter(meter_UID=meter_UID)
 
         except Exception as err:
             print('Smart meter could not be inserted into meters database.', file=sys.stderr)
@@ -73,7 +74,7 @@ class CustomerAPI:
             raise err
 
         try:
-            mysql._insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
+            mysql.insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
 
         except Exception as err:
             print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
