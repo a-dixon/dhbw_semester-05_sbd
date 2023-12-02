@@ -9,8 +9,8 @@ class TestCustomerAPI(unittest.TestCase):
     meter_uid = None
 
     def setUp(self):
-        self.api_key = "780ae4e6-6876-4bd0-bc6a-f1384963d1a8"
-        self.customer_uid = "bac1a571-4603-4655-9f88-6a746989afa0"
+        self.api_key = "247b9f5a-600f-4b46-a8a3-912657dd1425"
+        self.customer_uid = "ef809ffa-8872-4354-806b-f7fede0e4d75"
         self.api_url_create = "https://10.0.1.10/v1/provider/meter-create"
         self.api_url_measurements = f"https://10.0.1.10/v1/provider/meter-measurements"
         self.api_url_delete = "https://10.0.1.10/v1/provider/meter-delete"
