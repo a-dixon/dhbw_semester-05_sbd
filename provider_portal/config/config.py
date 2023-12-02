@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 def get_secret(path):
@@ -11,6 +12,11 @@ def get_secret(path):
     if existence:
         with open(path, 'r') as f:
             return f.read()
+
+
+class LoggingConfig:
+    LOGGING_LEVEL = logging.DEBUG
+    LOGGING_FILE = "provider_portal.log"
 
 
 class MySQLConfig:
