@@ -12,6 +12,8 @@ from app.utils.init.create_admin_users import insert_users_from_file
 logging.basicConfig(level=config.LoggingConfig.LOGGING_LEVEL, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("main")
 file_handler = logging.FileHandler(config.LoggingConfig.LOGGING_FILE)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 # Flask applications
