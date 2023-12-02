@@ -1,3 +1,4 @@
+import logging
 import sys
 import time
 
@@ -7,6 +8,8 @@ from .customer_api import CustomerAPI
 from .response import Response
 from app.utils.validation.string_validation import input_validation
 
+
+logger = logging.getLogger("main")
 
 # Dictionary to store IP addresses, requests, and timestamps
 request_tracker = {}
@@ -61,7 +64,7 @@ def create_meter():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when creating a smart meter: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when creating a smart meter: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
@@ -72,7 +75,7 @@ def create_meter():
             res = {"message": "success_create_meter", "meter_UID": meter_UID}
             return Response(dict=res).create_response()
         except Exception as err:
-            print(f"An error has occurred when creating a smart meter: {err}", file=sys.stderr)
+            logger.error(f"An error has occurred when creating a smart meter: {err}")
             res = {"message": "error_create_meter"}
             return Response(dict=res).create_response()
 
@@ -112,7 +115,7 @@ def meter_measurements():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred within the get measurements: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred within the get measurements: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
@@ -127,7 +130,7 @@ def meter_measurements():
             res = {"message": f"{err}"}
             return Response(dict=res).create_response()
         except Exception as err:
-            print(f"An error has occurred within the get measurements: {err}", file=sys.stderr)
+            logger.error(f"An error has occurred within the get measurements: {err}")
             res = {"message": "error_decoding"}
             return Response(dict=res).create_response()
 
@@ -162,7 +165,7 @@ def delete_meter():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when deleting a smart meter: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when deleting a smart meter: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 

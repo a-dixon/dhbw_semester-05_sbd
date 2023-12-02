@@ -1,7 +1,11 @@
+import logging
 import sys
 import mysql.connector
 from mysql.connector import errorcode
 from config.config import MySQLConfig
+
+
+logger = logging.getLogger("main")
 
 
 class MySQL:
@@ -32,7 +36,7 @@ class MySQL:
             cursor.execute(
                 f'CREATE DATABASE {self._DB_NAME} DEFAULT CHARACTER SET "utf8"')
         except mysql.connector.Error as err:
-            print(f'Failed creating database: {err}', file=sys.stderr)
+            logger.error(f"Failed creating mysql database: {err}")
             exit(1)
 
     def create(self):
@@ -83,12 +87,12 @@ class MySQL:
         try:
             cursor.execute(f'USE {self._DB_NAME}')
         except mysql.connector.Error as err:
-            print(f'Database {self._DB_NAME} does not exist.', file=sys.stderr)
+            logger.error(f"Database {self._DB_NAME} does not exist")
 
             # Call create function if the database does not exist
             if err.errno == errorcode.ER_BAD_DB_ERROR:
                 self._create_database(cursor=cursor)
-                print(f'Database {self._DB_NAME} created successfully', file=sys.stderr)
+                logger.error(f"Database {self._DB_NAME} created successfully")
                 cnx.database = self._DB_NAME
             else:
                 print(err)
@@ -99,13 +103,13 @@ class MySQL:
             table_description = self._TABLES[table_name]
 
             try:
-                print(f'Creating table {table_name}:', end='', file=sys.stderr)
+                logger.info(f"Creating table {table_name}")
                 cursor.execute(table_description)
             except mysql.connector.Error as err:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                    print(' already exists.', file=sys.stderr)
+                    logger.info(f"Table: {table_name} already exists")
                 else:
-                    print(err.msg)
+                    logger.error(f"Error while creating tables: {err}")
 
             else:
                 print(' OK', file=sys.stderr)
@@ -135,10 +139,9 @@ class MySQL:
             cnx.commit()
         except mysql.connector.Error as err:
             if err.errno == mysql.connector.errors.IntegrityError:
-                print(f'Error: Duplicate entry for username: {username}', file=sys.stderr)
+                logger.error(f"Duplicate entry for username: {username}")
             else:
-                print(f'Error inserting admin user: {username}', file=sys.stderr)
-                print(err, file=sys.stderr)
+                logger.error(f"Error inserting admin user: {username}")
                 cnx.rollback()
 
         finally:
@@ -167,8 +170,7 @@ class MySQL:
             cursor.execute(query, (username,))
             api_key = cursor.fetchone()[0] if cursor.rowcount > 0 else None
         except mysql.connector.Error as err:
-            print(f'Error reading api_key from admin user: {username}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error reading api_key from admin user: {username}")
             cnx.rollback()
             raise err
 
@@ -200,8 +202,7 @@ class MySQL:
             cursor.execute(query, (customer_UID,))
             api_key = cursor.fetchone()[0] if cursor.rowcount > 0 else None
         except mysql.connector.Error as err:
-            print(f'Error reading api_key from customer: {customer_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error reading api_key from customer: {customer_UID}")
             cnx.rollback()
             raise err
 
@@ -230,8 +231,7 @@ class MySQL:
             cursor.execute(query, (meter_UID,))
             cnx.commit()
         except mysql.connector.Error as err:
-            print(f'Error creating smart meter with meter_UID: {meter_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error creating smart meter with meter_UID: {meter_UID}")
             cnx.rollback()
             raise err
 
@@ -259,8 +259,7 @@ class MySQL:
             cursor.execute(query, (customer_UID, meter_UID))
             cnx.commit()
         except mysql.connector.Error as err:
-            print(f'Error creating smart meter with meter_UID: {meter_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error creating smart meter with meter_UID: {meter_UID}")
             cnx.rollback()
             raise err
 
@@ -287,8 +286,7 @@ class MySQL:
             cursor.execute(query, (meter_UID,))
             cnx.commit()
         except mysql.connector.Error as err:
-            print(f'Error deleting smart meter with meter_UID: {meter_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error deleting smart meter with meter_UID: {meter_UID}")
             cnx.rollback()
             raise err
 
@@ -319,8 +317,7 @@ class MySQL:
             # Commit the changes
             cnx.commit()
         except mysql.connector.Error as err:
-            print(f'Error deleting smart meter with meter_UID: {meter_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error deleting smart meter with meter_UID: {meter_UID}")
             cnx.rollback()
             raise err
 
@@ -354,8 +351,7 @@ class MySQL:
             # Commit the changes
             cnx.commit()
         except mysql.connector.Error as err:
-            print(f'Error creating customer portal with customer_UID: {customer_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error creating customer portal with customer_UID: {customer_UID}")
             cnx.rollback()
             raise err
 
@@ -387,8 +383,7 @@ class MySQL:
             affected_rows = cursor.rowcount
 
         except mysql.connector.Error as err:
-            print(f'Error deleting customer portal with customer_UID: {customer_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error deleting customer portal with customer_UID: {customer_UID}")
             cnx.rollback()
             raise err
 
@@ -423,7 +418,7 @@ class MySQL:
             return customer_portals
 
         except mysql.connector.Error as err:
-            print(f'Error listing customer portals: {err}', file=sys.stderr)
+            logger.error(f"Error listing customer portals: {err}")
             raise err
 
         finally:
@@ -456,8 +451,7 @@ class MySQL:
             return meters
 
         except mysql.connector.Error as err:
-            print(f'Error listing smart meters for customer_UID: {customer_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error listing smart meters for customer_UID: {customer_UID}")
             raise err
 
         finally:

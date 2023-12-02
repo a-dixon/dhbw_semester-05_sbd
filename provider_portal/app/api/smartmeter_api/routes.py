@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from app.api.smartmeter_api.response import Response
@@ -5,6 +6,10 @@ from app.utils.validation.string_validation import input_validation
 from . import smartmeter_api_blueprint as bp
 from flask import request, jsonify
 from . import smartmeter_api
+
+
+logger = logging.getLogger("main")
+
 
 @bp.route('meter-measurements', methods=['POST'])
 def meter_measurements():
@@ -40,7 +45,7 @@ def meter_measurements():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when getting meter measurements: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when getting meter measurements: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 

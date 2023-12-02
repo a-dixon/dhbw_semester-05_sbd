@@ -1,7 +1,10 @@
+import logging
 import sys
 from uuid import uuid4
 from app.db.mysql.mysql import MySQL
 
+
+logger = logging.getLogger("main")
 
 class AdminAPI:
     """
@@ -60,8 +63,7 @@ class AdminAPI:
             mysql.insert_customer(customer_UID=customer_UID, api_key=api_key)
 
         except Exception as err:
-            print('Customer portal could not be inserted into database.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Customer portal could not be inserted into database: {err}")
             raise err
 
         return customer_UID, api_key
@@ -79,8 +81,7 @@ class AdminAPI:
         try:
             mysql.delete_customer(customer_UID)
         except Exception as err:
-            print(f'Error deleting customer portal with customer_UID: {customer_UID}', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error deleting customer portal with customer_UID: {customer_UID}")
             raise err
 
     @staticmethod
@@ -98,8 +99,7 @@ class AdminAPI:
             return customer_portals
 
         except Exception as err:
-            print('Error listing customer portals.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error listing customer portals: {err}")
             raise err
 
     @staticmethod
@@ -117,6 +117,5 @@ class AdminAPI:
             return meters
 
         except Exception as err:
-            print('Error listing customer portals.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Error listing customer portals: {err}")
             raise err

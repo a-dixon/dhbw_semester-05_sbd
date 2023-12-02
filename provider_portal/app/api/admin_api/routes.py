@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from flask import request, json
@@ -5,6 +6,9 @@ from .admin_api import AdminAPI
 from .response import Response
 from . import admin_api_blueprint as bp
 from app.utils.validation.string_validation import input_validation
+
+
+logger = logging.getLogger("main")
 
 
 @bp.route('customer-create', methods=['POST'])
@@ -33,7 +37,7 @@ def create_customer_portal():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when creating a customer: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when creating a customer: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
@@ -76,7 +80,7 @@ def delete_customer_portal():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when deleting a customer: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when deleting a customer: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
@@ -87,7 +91,7 @@ def delete_customer_portal():
             return Response(dict=res).create_response()
 
         except Exception as err:
-            print(f"An error has occurred when deleting a customer: {err}", file=sys.stderr)
+            logger.error(f"An error has occurred when deleting a customer: {err}")
             res = {"message": "error_delete_customer"}
             return Response(dict=res).create_response()
 
@@ -116,7 +120,7 @@ def list_customer_portals():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when listing customer portals: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when listing customer portals: {err}")
         res = {"message": "error_authentication"}
         return Response(dict=res).create_response()
 
@@ -127,7 +131,7 @@ def list_customer_portals():
             return Response(dict=res).create_response()
 
         except Exception as err:
-            print(f"An error has occurred when listing customer portals: {err}", file=sys.stderr)
+            logger.error(f"An error has occurred when listing customer portals: {err}")
             res = {"message": "error_list_customer_portals"}
             return Response(dict=res).create_response()
 
@@ -157,7 +161,7 @@ def list_smart_meters_for_customer():
         else:
             raise ValueError("error_decoding")
     except Exception as err:
-        print(f"An error has occurred when listing smart meters: {err}", file=sys.stderr)
+        logger.error(f"An error has occurred when listing smart meters: {err}")
         res = {"message": "error_authentication"}
         return Response(dict=res).create_response()
 
@@ -168,7 +172,7 @@ def list_smart_meters_for_customer():
             return Response(dict=res).create_response()
 
         except Exception as err:
-            print(f"An error has occurred when listing smart meters: {err}", file=sys.stderr)
+            logger.error(f"An error has occurred when listing smart meters: {err}")
             res = {"message": "error_list_smart_meters"}
             return Response(dict=res).create_response()
 

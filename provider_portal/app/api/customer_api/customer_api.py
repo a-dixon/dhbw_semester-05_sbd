@@ -1,3 +1,4 @@
+import logging
 import sys
 import shutil
 from datetime import datetime, timezone, timedelta
@@ -6,6 +7,9 @@ from config import config
 from app.db.mysql.mysql import MySQL
 from app.db.influx.influx import InfluxDB
 from app.utils.certificates.gen_client_certificates import generate_client_certificate
+
+
+logger = logging.getLogger("main")
 
 
 class CustomerAPI:
@@ -69,16 +73,14 @@ class CustomerAPI:
             mysql.insert_meter(meter_UID=meter_UID)
 
         except Exception as err:
-            print('Smart meter could not be inserted into meters database.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Smart meter could not be inserted into meters database: {err}")
             raise err
 
         try:
             mysql.insert_customer_meter(customer_UID=self._customer_UID, meter_UID=meter_UID)
 
         except Exception as err:
-            print('Smart meter could not be inserted into customer_meters database.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Smart meter could not be inserted into customer_meters database: {err}")
             raise err
 
         generate_client_certificate(meter_UID)
@@ -113,7 +115,6 @@ class CustomerAPI:
         if num_data_points > 3600:
             raise ValueError("error_over_maximum")
 
-        print(start_time.replace(" ", "+"), file=sys.stderr)
         converted_start_time = start_time.replace(" ", "+")
         converted_end_time = end_time.replace(" ", "+")
         converted_data_interval = data_interval + "s"
@@ -139,16 +140,14 @@ class CustomerAPI:
             mysql.delete_customer_meter(meter_UID=meter_UID)
 
         except Exception as err:
-            print('Smart meter could not be deleted from customer_meters database.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Smart meter could not be deleted from customer_meters database: {err}")
             raise err
 
         try:
             mysql.delete_meter(meter_UID=meter_UID)
             # influxdb.delete(meter_UID)
         except Exception as err:
-            print('Smart meter could not be deleted from meters database.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Smart meter could not be deleted from meters database: {err}")
             raise err
 
         try:
@@ -156,6 +155,5 @@ class CustomerAPI:
             shutil.rmtree(path)
 
         except Exception as err:
-            print('Smart meter could not be deleted from smartmeter wrapper.', file=sys.stderr)
-            print(err, file=sys.stderr)
+            logger.error(f"Smart meter could not be deleted from smartmeter wrapper: {err}")
             raise err

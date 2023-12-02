@@ -1,8 +1,12 @@
+import logging
 from datetime import datetime, timezone, timedelta
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from config import config
 import sys
+
+
+logger = logging.getLogger("main")
 
 
 class InfluxDB:
@@ -88,8 +92,8 @@ class InfluxDB:
             write_api = self._client.write_api(write_options=SYNCHRONOUS)
             write_api.write(self._bucket, self._provider, point)
             return True
-        except Exception as e:
-            print(f"Error writing data: {e}")
+        except Exception as err:
+            logger.error(f"Error writing data to influxdb: {err}")
             return False
 
     def delete(self, uid):
@@ -118,6 +122,6 @@ class InfluxDB:
             delete_api.delete("1970-01-01T00:00:00Z", new_time_rfc3339, '_measurement="consumption"', f'uid="{uid}"', org=self._provider, bucket=self._bucket)
 
             return True
-        except Exception as e:
-            print(f"Error deleting data: {e}")
+        except Exception as err:
+            logger.error(f"Error deleting data from influxdb: {err}")
             return False
