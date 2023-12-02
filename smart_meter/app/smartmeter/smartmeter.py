@@ -1,3 +1,4 @@
+import os
 import random
 import threading
 import time
@@ -18,21 +19,38 @@ class SmartMeter:
         self._uid = uid
         self._api = APIHandler(config.APIConfig.API_URL, uid)
 
-    @staticmethod
-    def _generate_consumption(current_time):
+    def _generate_consumption(self):
         """
-        Generate a random consumption value with a slight variation.
-
-        Parameters:
-        - current_time (datetime): The current timestamp.
+        Generate a random consumption value with a slight variation based on the persistent consumption
 
         Returns:
         - float: Randomized consumption value.
         """
-        consumption = 1
-        random_factor = random.uniform(-0.1, 0.1)
-        randomized_consumption = consumption + (consumption * random_factor)
-        return randomized_consumption
+        file_path = f"{config.CertificateConfig.CERT_DIRECTORY}/{self._uid}/consumption.txt"
+
+        # File could not be found when deleting smart meter
+        if not os.path.exists(file_path):
+            try:
+                with open(file_path, 'w') as file:
+                    file.write("0")
+            except FileNotFoundError:
+                return 0
+
+        with open(file_path, 'r') as file:
+            priv_consumption = float(file.read())
+
+        kwh_per_secound = config.SmartmeterConfig.AVERAGE_CONSUMPTION_PER_YEAR / (365 * 24 * 60 * 60)
+        randomness_factor = config.SmartmeterConfig.RANDOMNESS_FACTOR
+
+        min_consumption = kwh_per_secound - (randomness_factor * kwh_per_secound)
+        max_consumption = kwh_per_secound + (randomness_factor * kwh_per_secound)
+        randomized_consumption = random.uniform(min_consumption, max_consumption)
+        consumption = priv_consumption + randomized_consumption
+
+        with open(file_path, 'w') as file:
+            file.write(str(consumption))
+
+        return consumption
 
     def _write_consumption(self, time_between_datapoints):
         """
@@ -47,10 +65,10 @@ class SmartMeter:
             last_time, _ = self._consumption[len(self._consumption) - 1]
             difference = (current_time - last_time).total_seconds()
             if difference >= time_between_datapoints:
-                consumption = self._generate_consumption(current_time)
+                consumption = self._generate_consumption()
                 self._consumption.append((current_time, consumption))
         else:
-            consumption = self._generate_consumption(current_time)
+            consumption = self._generate_consumption()
             self._consumption.append((current_time, consumption))
 
     def _delete(self, timestamp):
@@ -80,7 +98,7 @@ class SmartMeter:
             data_list.append(data_point)
 
         status = self._api.send_data(data_list)
-        last_timestamp, _ = self._consumption[datapoints_until_send-1]
+        last_timestamp, _ = self._consumption[datapoints_until_send - 1]
         if status:
             self._delete(last_timestamp)
 
