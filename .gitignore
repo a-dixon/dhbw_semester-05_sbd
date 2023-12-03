@@ -8,6 +8,7 @@ db_root_password.txt
 
 # provider portal
 provider_portal/db_data
+provider_portal/provider_portal.log
 provider_portal/config/.DS_Store
 provider_portal/config/certificates/.DS_Store
 smart_meter/config/certificates/.DS_Store
