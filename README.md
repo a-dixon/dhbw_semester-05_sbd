@@ -21,6 +21,7 @@ Mit dem folgenden Befehl können die Container gebaut werden:
 ```
 docker compose build
 ```
+Die obigen Befehle funktionieren auch mit `docker-compose ...`.
 
 ## IP Adressen
 Die verschiedenen Teile unserer Anwendung stehen unter den folgenden IP Adressen zur Verfügung:
