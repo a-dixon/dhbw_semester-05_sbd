@@ -2,13 +2,7 @@ __pycache__
 
 .venv
 
-# DB Passwords
-db_password.txt
-db_root_password.txt
-
 # provider portal
-provider_portal/db_data
-provider_portal/config/.DS_Store
-provider_portal/config/certificates/.DS_Store
-smart_meter/config/certificates/.DS_Store
-provider_portal/config/certificates/root_ca/ca-private-key.pem
+provider_portal/db_data/mysql
+provider_portal/db_data/influx/db
+provider_portal/db_data/influx/config/influx-configs
