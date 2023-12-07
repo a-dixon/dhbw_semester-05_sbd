@@ -5,7 +5,7 @@ class Response:
     # Define messages and their corresponding HTTP status codes
     MESSAGES = {
         "success_create_meter": ("Smart Meter wurde erfolgreich angelegt.", 201),
-        "success_delete_meter": ("Smart Meter wurde erfolgreich gelöscht.", 200),
+        "success_delete_meter": ("Smart Meter wurde erfolgreich geloescht.", 200),
 
         "error_create_meter": ("Smart Meter konnte nicht angelegt werden. Die Kombination von Meter UID und Customer UID existiert bereits.", 409),
         "error_meter_customer_combination": ("Die Kombination von Meter UID und Customer UID existiert nicht.", 404),
