@@ -2,7 +2,8 @@ __pycache__
 
 .venv
 
-# provider portal
 provider_portal/db_data/mysql
 provider_portal/db_data/influx/db
 provider_portal/db_data/influx/config/influx-configs
+provider_portal/provider_portal.log
+
