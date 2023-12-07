@@ -53,7 +53,7 @@ def create_meter():
         # Extract API key from headers
         api_key = request.headers['Authorization']
         if "Bearer " in api_key:
-            api_key.replace("Bearer ", "")
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request body
         data = json.loads(request.data)
@@ -103,7 +103,7 @@ def meter_measurements():
         # Extract API key from headers
         api_key = request.headers['Authorization']
         if "Bearer " in api_key:
-            api_key.replace("Bearer ", "")
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request query parameters
         customer_UID = request.args.get('customerUID')
@@ -157,7 +157,7 @@ def delete_meter():
         # Extract API key from headers
         api_key = request.headers['Authorization']
         if "Bearer " in api_key:
-            api_key.replace("Bearer ", "")
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request body
         data = json.loads(request.data)
