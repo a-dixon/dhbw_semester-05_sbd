@@ -75,7 +75,7 @@ if __name__ == '__main__':
     smartmeter_thread.start()
 
     provider_thread = threading.Thread(target=run_app, args=(
-    customer_api_app, '10.0.1.10', 443, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
+    customer_api_app, '10.0.1.10', 8100, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     provider_thread.start()
 
     admin_thread = threading.Thread(target=run_app, args=(
