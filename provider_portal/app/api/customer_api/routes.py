@@ -52,6 +52,8 @@ def create_meter():
     try:
         # Extract API key from headers
         api_key = request.headers['Authorization']
+        if "Bearer " in api_key:
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request body
         data = json.loads(request.data)
@@ -100,6 +102,8 @@ def meter_measurements():
     try:
         # Extract API key from headers
         api_key = request.headers['Authorization']
+        if "Bearer " in api_key:
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request query parameters
         customer_UID = request.args.get('customerUID')
@@ -113,9 +117,10 @@ def meter_measurements():
             api = CustomerAPI(customer_UID=customer_UID, api_key=api_key)
             auth_status = api.authenticate_customer_portal()
         else:
+            logger.error(f"An error while authenticating has occurred")
             raise ValueError("error_decoding")
     except Exception as err:
-        logger.error(f"An error has occurred within the get measurements: {err}")
+        logger.error(f"An error has occurred within the get measurements, while validation: {err}")
         res = {"message": "error_decoding"}
         return Response(dict=res).create_response()
 
@@ -152,6 +157,8 @@ def delete_meter():
     try:
         # Extract API key from headers
         api_key = request.headers['Authorization']
+        if "Bearer " in api_key:
+            api_key = api_key.replace("Bearer ", "")
 
         # Extract data from the request body
         data = json.loads(request.data)

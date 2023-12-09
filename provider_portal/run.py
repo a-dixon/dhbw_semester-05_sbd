@@ -71,15 +71,15 @@ if __name__ == '__main__':
         insert_users_from_file(mysql_db)
 
     # Threaded Flask applications
-    smartmeter_thread = threading.Thread(target=run_app, args=(smartmeter_api_app, '10.0.1.10', 8080, ssl_context))
+    smartmeter_thread = threading.Thread(target=run_app, args=(smartmeter_api_app, '0.0.0.0', 8080, ssl_context))
     smartmeter_thread.start()
 
     provider_thread = threading.Thread(target=run_app, args=(
-    customer_api_app, '10.0.1.10', 443, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
+    customer_api_app, '0.0.0.0', 8100, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     provider_thread.start()
 
     admin_thread = threading.Thread(target=run_app, args=(
-    admin_api_app, '10.0.1.10', 8090, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
+    admin_api_app, '0.0.0.0', 8090, (config.CertificateConfig.SERVER_CERT, config.CertificateConfig.SERVER_KEY)))
     admin_thread.start()
 
     # Wait for all threads to finish

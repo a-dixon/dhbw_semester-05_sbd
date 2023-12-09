@@ -3,6 +3,8 @@ services:
   provider_portal:
     build: ./provider_portal
     container_name: provider_portal
+    ports:
+      - 8100:8100
     volumes:
       - ./provider_portal:/app/provider_portal
       - ./smart_meter/config/certificates/smartmeter_certificates:/app/smart_meter/config/certificates/smartmeter_certificates
@@ -29,6 +31,8 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    ports:
+      - 8086:8086
     environment:
       DOCKER_INFLUXDB_INIT_MODE: "setup"
       DOCKER_INFLUXDB_INIT_USERNAME: "admin"
