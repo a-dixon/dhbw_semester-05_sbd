@@ -102,22 +102,27 @@ class CustomerAPI:
         Raises:
             ValueError: If the specified time range is in the future or exceeds the maximum data points allowed.
         """
-        # Check if end_time is in the future
-        current_time = datetime.now(timezone(timedelta(hours=1)))
-        if datetime.fromisoformat(end_time.replace(" ", "+")) > current_time:
-            raise ValueError("error_no_data")
+        try:
+            # Check if end_time is in the future
+            current_time = datetime.now(timezone(timedelta(hours=1)))
+            if datetime.fromisoformat(end_time.replace(" ", "+")) > current_time:
+                raise ValueError("error_no_data")
 
-        # Check the number of data points based on the specified time range and data interval
-        time_diff = datetime.fromisoformat(end_time.replace(" ", "+")) - datetime.fromisoformat(
-            start_time.replace(" ", "+"))
-        num_data_points = int(time_diff.total_seconds() / int(data_interval))
+            # Check the number of data points based on the specified time range and data interval
+            time_diff = datetime.fromisoformat(end_time.replace(" ", "+")) - datetime.fromisoformat(
+                start_time.replace(" ", "+"))
+            num_data_points = int(time_diff.total_seconds() / int(data_interval))
 
-        if num_data_points > 3600:
-            raise ValueError("error_over_maximum")
+            if num_data_points > 3600:
+                raise ValueError("error_over_maximum")
+    
+            converted_start_time = start_time.replace(" ", "+")
+            converted_end_time = end_time.replace(" ", "+")
+            converted_data_interval = data_interval + "s"
+        except Exception as err:
+            logger.error(f"An exception occurred while decoding time format")
+            raise ValueError("error_decoding")
 
-        converted_start_time = start_time.replace(" ", "+")
-        converted_end_time = end_time.replace(" ", "+")
-        converted_data_interval = data_interval + "s"
 
         influxdb = InfluxDB()
         reading = influxdb.read(start_time=converted_start_time, end_time=converted_end_time,
