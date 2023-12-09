@@ -7,3 +7,9 @@ provider_portal/db_data/influx/db
 provider_portal/db_data/influx/config/influx-configs
 provider_portal/provider_portal.log
 
+
+smart_meter/config/certificates/.DS_Store
+
+provider_portal/config/certificates/.DS_Store
+
+provider_portal/config/.DS_Store
