@@ -11,6 +11,7 @@ class Response:
         "error_meter_customer_combination": ("Die Kombination von Meter UID und Customer UID existiert nicht.", 404),
         "error_no_data": ("Keine Daten im angegebenen Zeitraum vorhanden.", 404),
         "error_over_maximum": ("Die Anzahl der angeforderten Messpunkte überschreitet das Maximum. Bitte reduzieren Sie das Abfrageintervall oder teilen Sie die Anfrage auf.", 400),
+        "error_rate_limiting": ("Das Rate Limit wurde erreicht.", 400),
         "error_decoding": ("Das Format konnte nicht dekodiert werden.", 400),
 
         "error_authentication": ("Customer Portal konnte nicht authentifiziert werden.", 400)

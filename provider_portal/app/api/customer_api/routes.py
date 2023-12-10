@@ -34,7 +34,7 @@ def before_request():
 
     # Check if the IP has exceeded the maximum allowed requests
     if len(request_tracker.get(ip_address, {})) >= 300:
-        res = {"message": "error_over_maximum"}
+        res = {"message": "error_rate_limiting"}
         return Response(dict=res).create_response()
 
 
