@@ -56,10 +56,8 @@ class APIClient:
     def delete_smart_meters_of_customer(self, customer_UID):
         data = {"api_key": self.api_key, "username": self.username, "customer_UID": customer_UID}
         response = self.api_request("meter-delete", data, method='DELETE')
-        if "erfolgreich" in response:
+        if response:
             click.echo(f"Die Smart Meter wurden erfolgreich gelöscht.")
-        else:
-            click.echo(f"Ein Fehler ist aufgetreten.")
 
     def delete_customer_portal(self, customer_UID):
         data = {"api_key": self.api_key, "username": self.username, "customer_UID": customer_UID}
