@@ -44,7 +44,7 @@ if __name__ == "__main__":
         click.echo(" " * menu_indent + "2. " + Fore.YELLOW + "Kundenportale auflisten")
         click.echo(" " * menu_indent + "3. " + Fore.YELLOW + "Kundenportal löschen")
         click.echo(" " * menu_indent + "4. " + Fore.YELLOW + "Smartmeter auflisten")
-        click.echo(" " * menu_indent + "4. " + Fore.YELLOW + "Smartmeter löschen")
+        click.echo(" " * menu_indent + "5. " + Fore.YELLOW + "Smartmeter löschen")
         click.echo(" " * menu_indent + "6. " + Fore.RED + "Beenden" + Style.RESET_ALL)
         click.echo(" " * menu_indent + "=" * menu_width)
 
