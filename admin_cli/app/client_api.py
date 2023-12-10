@@ -26,6 +26,8 @@ class APIClient:
         self.username = input("Username: ")
         self.api_key = input("API Key: ")
         print("Die Anmeldedaten wurden gespeichert.")
+        print("Bitte beachten Sie, dass zu diesem Zeitpunkt keine Validierung der Logindaten passiert.")
+        print("Dies passiert erst, wenn Anfragen zum Server gesendet werden. Daher enstprechende Unterpunkte des Menüs gewählt werden.")
 
     def new_customer_portals(self):
         data = {"username": self.username, "api_key": self.api_key}
