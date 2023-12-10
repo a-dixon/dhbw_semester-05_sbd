@@ -14,8 +14,10 @@ class Response:
         "error_delete_customer": ("Customer Portal konnte nicht gelöscht werden.", 404),
         "success_list_customer_portals": ("Customer Portals wurden erfolgreich aufgelistet.", 200),
         "success_list_smart_meters": ("Smart Meters wurden erfolgreich aufgelistet.", 200),
+        "success_delete_smart_meters": ("Smart Meters wurden erfolgreich geloescht.", 200),
         "error_list_smart_meters": ("Smart Meters konnten nicht aufgelistet werden.", 500),
-        "error_list_customer_portals": ("Customer Portals konnten nicht aufgelistet werden.", 500)
+        "error_list_customer_portals": ("Customer Portals konnten nicht aufgelistet werden.", 500),
+        "error_delete_smart_meters": ("Smart Meter konnten nicht gelöscht werden.", 500)
     }
 
     def __init__(self, dict):

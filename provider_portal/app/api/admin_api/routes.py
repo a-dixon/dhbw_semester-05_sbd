@@ -6,7 +6,7 @@ from .admin_api import AdminAPI
 from .response import Response
 from . import admin_api_blueprint as bp
 from app.utils.validation.string_validation import input_validation
-
+from app.api.customer_api.customer_api import CustomerAPI
 
 logger = logging.getLogger("main")
 
@@ -133,6 +133,51 @@ def list_customer_portals():
         except Exception as err:
             logger.error(f"An error has occurred when listing customer portals: {err}")
             res = {"message": "error_list_customer_portals"}
+            return Response(dict=res).create_response()
+
+    res = {"message": "error_authentication"}
+    return Response(dict=res).create_response()
+
+
+@bp.route('meter-delete', methods=['DELETE'])
+def delete_smart_meters_for_customer():
+    """
+    Route to list all smart meters of customer.
+
+    This route is used by administrators to get a list of all smart meters of customer.
+
+    Returns:
+        JSON response containing the list of smart meters.
+    """
+    try:
+        data = json.loads(request.data)
+        api_key = data["api_key"]
+        username = data["username"]
+        customer_UID = data["customer_UID"]
+        if input_validation([api_key, username]):
+            # Initialize AdminAPI class
+            api = AdminAPI(api_key=api_key, username=username)
+            auth_status = api.authenticate_admin_user()
+        else:
+            raise ValueError("error_decoding")
+    except Exception as err:
+        logger.error(f"An error has occurred when deleting smart meters: {err}")
+        res = {"message": "error_authentication"}
+        return Response(dict=res).create_response()
+
+    if auth_status:
+        try:
+            meters = api.list_smart_meters_for_customer(customer_UID)
+            for meter in meters:
+                meter_uid = meter["meter_UID"]
+                api = CustomerAPI(customer_UID, None)
+                api.delete_meter(meter_uid)
+            res = {"message": "success_delete_smart_meters"}
+            return Response(dict=res).create_response()
+
+        except Exception as err:
+            logger.error(f"An error has occurred when listing smart meters: {err}")
+            res = {"message": "error_delete_smart_meters"}
             return Response(dict=res).create_response()
 
     res = {"message": "error_authentication"}
