@@ -5,6 +5,7 @@ services:
     container_name: provider_portal
     ports:
       - 8100:8100
+      - 8090:8090
     volumes:
       - ./provider_portal:/app/provider_portal
       - ./smart_meter/config/certificates/smartmeter_certificates:/app/smart_meter/config/certificates/smartmeter_certificates
