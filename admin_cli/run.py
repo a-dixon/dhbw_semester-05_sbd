@@ -44,10 +44,11 @@ if __name__ == "__main__":
         click.echo(" " * menu_indent + "2. " + Fore.YELLOW + "Kundenportale auflisten")
         click.echo(" " * menu_indent + "3. " + Fore.YELLOW + "Kundenportal löschen")
         click.echo(" " * menu_indent + "4. " + Fore.YELLOW + "Smartmeter auflisten")
-        click.echo(" " * menu_indent + "5. " + Fore.RED + "Beenden" + Style.RESET_ALL)
+        click.echo(" " * menu_indent + "4. " + Fore.YELLOW + "Smartmeter löschen")
+        click.echo(" " * menu_indent + "6. " + Fore.RED + "Beenden" + Style.RESET_ALL)
         click.echo(" " * menu_indent + "=" * menu_width)
 
-        choice = click.prompt(Fore.CYAN + "Bitte wählen Sie eine Option (1-5)")
+        choice = click.prompt(Fore.CYAN + "Bitte wählen Sie eine Option (1-6)")
 
         if choice == "1":
             api.new_customer_portals()
@@ -60,6 +61,9 @@ if __name__ == "__main__":
             customer_UID = input("Bitte geben Sie die Kunden-UID ein: ")
             api.list_smart_meters_of_customer(customer_UID)
         elif choice == "5":
+            customer_UID = input("Bitte geben Sie die Kunden-UID ein: ")
+            api.delete_smart_meters_of_customer(customer_UID)
+        elif choice == "6":
             click.echo(Fore.RED + "Programm wird beendet.")
             break
         else:
