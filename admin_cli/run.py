@@ -5,6 +5,7 @@ from click import style
 from colorama import Fore, Style
 
 from app.client_api import APIClient
+from config.config import PROVIDER_URL, CERT_PATH
 
 
 def clear_screen():
@@ -26,7 +27,7 @@ def center_text(text, width):
 if __name__ == "__main__":
     terminal_height, terminal_width = get_terminal_size()
 
-    api = APIClient(base_url="https://10.0.1.10:8090/v1/admin/", cert_path="config/certificates/root_ca/ca-public-key.pem")
+    api = APIClient(base_url=PROVIDER_URL, cert_path=CERT_PATH)
 
     clear_screen()
     login_text = center_text("===== ANMELDUNG =====", terminal_width)
